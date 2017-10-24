@@ -1,9 +1,9 @@
 defmodule Paytm.API.Wallet do
   use HTTPoison.Base
 
-  @endpoint Application.get_env(:paytm, Paytm)[:wallet_api_base_url]
+  @base_url Application.get_env(:paytm, Paytm.API.Wallet)[:base_url]
 
   def process_url(url) do
-    @endpoint <> url
+    @base_url <> url
   end
 end
