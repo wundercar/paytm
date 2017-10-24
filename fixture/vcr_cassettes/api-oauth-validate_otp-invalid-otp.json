@@ -1,0 +1,56 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"foo@bar.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"745ec143-b878-490c-a13c-54d7666b8b1b\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:17 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"state\":\"745ec143-b878-490c-a13c-54d7666b8b1b\",\"otp\":\"111111\"}",
+      "headers": {
+        "Authorization": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/validate/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"FAILURE\",\"responseCode\":\"403\",\"message\":\"Invalid OTP entered.\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:18 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "74",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

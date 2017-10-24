@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "session_token": "foobar"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/user/details"
+    },
+    "response": {
+      "body": "{\"status\":\"FAILURE\",\"responseCode\":\"530\",\"message\":\"Invalid Token\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Tue, 24 Oct 2017 11:39:12 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "67",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

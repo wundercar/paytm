@@ -1,0 +1,28 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"foo@bar.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"a6954fa3-734f-4e20-9c82-24e228be8763\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:12 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
