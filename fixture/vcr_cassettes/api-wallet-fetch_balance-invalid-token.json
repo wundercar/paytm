@@ -1,0 +1,27 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "content-type": "application/json",
+        "ssotoken": "***"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://trust-uat.paytm.in/service/checkUserBalance"
+    },
+    "response": {
+      "body": "{\"type\":null,\"requestGuid\":null,\"orderId\":null,\"status\":\"FAILURE\",\"statusCode\":\"403\",\"statusMessage\":\"Unauthorized Access\",\"response\":null,\"metadata\":null}",
+      "headers": {
+        "Server": "nginx/1.8.1",
+        "Date": "Tue, 24 Oct 2017 15:44:39 GMT",
+        "Content-Length": "155",
+        "Connection": "keep-alive",
+        "Set-Cookie": "***"
+      },
+      "status_code": 403,
+      "type": "ok"
+    }
+  }
+]
