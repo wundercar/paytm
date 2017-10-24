@@ -1,20 +1,22 @@
 [
   {
     "request": {
-      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"foobar\",\"clientId\":\"CLIENT_ID\"}",
-      "headers": [],
-      "method": "post",
+      "body": "",
+      "headers": {
+        "session_token": "foobar"
+      },
+      "method": "get",
       "options": [],
       "request_body": "",
-      "url": "https://accounts-uat.paytm.com/signin/otp"
+      "url": "https://accounts-uat.paytm.com/user/details"
     },
     "response": {
-      "body": "{\"status\":\"FAILURE\",\"responseCode\":\"465\",\"message\":\"Invalid Email\"}",
+      "body": "{\"status\":\"FAILURE\",\"responseCode\":\"530\",\"message\":\"Invalid Token\"}",
       "headers": {
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
-        "Content-Type": "application/json",
-        "Date": "Tue, 24 Oct 2017 11:39:11 GMT",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Date": "Tue, 24 Oct 2017 11:39:12 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",

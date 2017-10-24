@@ -14,7 +14,7 @@
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Tue, 24 Oct 2017 09:59:16 GMT",
+        "Date": "Tue, 24 Oct 2017 11:39:12 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",

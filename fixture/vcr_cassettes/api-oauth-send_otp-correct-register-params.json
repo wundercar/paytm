@@ -9,12 +9,12 @@
       "url": "https://accounts-uat.paytm.com/signin/otp"
     },
     "response": {
-      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"02\",\"state\":\"257c3473-82bb-4306-8625-80be93b7b9c8\"}",
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"02\",\"state\":\"e54c5292-8886-47d9-b3af-0c6b16e8f3ef\"}",
       "headers": {
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Tue, 24 Oct 2017 09:50:10 GMT",
+        "Date": "Tue, 24 Oct 2017 11:39:13 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",

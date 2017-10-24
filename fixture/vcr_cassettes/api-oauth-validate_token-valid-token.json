@@ -1,0 +1,84 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"foo@bar.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"fa925ed9-80a3-4d36-b7d9-e58f39f289e2\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:13 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"state\":\"fa925ed9-80a3-4d36-b7d9-e58f39f289e2\",\"otp\":\"489871\"}",
+      "headers": {
+        "Authorization": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/validate/otp"
+    },
+    "response": {
+      "body": "{\"access_token\":\"810d0508-c1d9-4d0e-ada1-e6e009eda9ad\",\"expires\":\"1516618298430\",\"scope\":\"wallet\",\"resourceOwnerId\":\"11065108\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:16 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "127",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "session_token": "810d0508-c1d9-4d0e-ada1-e6e009eda9ad"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/user/details"
+    },
+    "response": {
+      "body": "{\"id\":11065108,\"email\":\"shrikant@pacetravels.in\",\"mobile\":\"7777777777\",\"expires\":\"1516618298430\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Tue, 24 Oct 2017 11:39:16 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "97",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
