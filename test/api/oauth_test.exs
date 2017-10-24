@@ -77,6 +77,11 @@ defmodule Paytm.API.OAuthTest do
         assert {:error, _, :invalid_otp} = OAuth.validate_otp("111111", state)
       end
     end
+    test "returns :invalid_code when an invalid code is provided" do
+      use_cassette "api-oauth-validate_otp-invalid-code", match_requests_on: [:request_body] do
+        assert {:error, _, :invalid_code} = OAuth.validate_otp(@existing_user_otp, "foo")
+      end
+    end
   end
 
   describe "validate_token/1" do
