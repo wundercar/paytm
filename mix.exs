@@ -9,6 +9,8 @@ defmodule Paytm.Mixfile do
       start_permanent: Mix.env == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env),
+      package: package(),
+      description: "Paytm API client for Elixir with Wallet and OAuth API support"
     ]
   end
 
@@ -18,11 +20,20 @@ defmodule Paytm.Mixfile do
     ]
   end
 
+  defp package do
+    [
+      maintainers: ["Nihal Gonsalves <nihal@wunder.org>", "Robert Salama <robert@wunder.org>", "Bruno Santos <bruno.santos@wunder.org>"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/wundercar/paytm"}
+    ]
+  end
+
   defp deps do
     [
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.1"},
       {:exvcr, "~> 0.8", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
 

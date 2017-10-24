@@ -1,11 +1,14 @@
 # Paytm
 
-**TODO: Add description**
+Paytm API client for Elixir with Wallet and OAuth API support
+
+## Documentation
+
+[https://hexdocs.pm/paytm](https://hexdocs.pm/paytm)
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `paytm` to your list of dependencies in `mix.exs`:
+Add `paytm` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -14,8 +17,3 @@ def deps do
   ]
 end
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/paytm](https://hexdocs.pm/paytm).
-

@@ -59,7 +59,7 @@ defmodule Paytm.API.OAuth do
   def send_otp(_), do: {:error, "`email` and `phone` are required", nil}
 
   @spec validate_otp(otp :: String.t, state :: String.t)
-        :: {:ok, token :: Paytm.API.OAuth.Token}
+        :: {:ok, token :: Paytm.API.OAuth.Token.t}
         |  {:error, message :: String.t | atom, code :: atom}
   def validate_otp(otp, state) do
     body = Poison.encode!(%{otp: otp, state: state})
@@ -81,7 +81,9 @@ defmodule Paytm.API.OAuth do
     end
   end
 
-
+  @spec validate_token(token :: Paytm.API.OAuth.Token.t | String.t)
+        :: {:ok, token :: Paytm.API.OAuth.Token.t}
+        |  {:error, message :: String.t | atom, code :: atom}
   def validate_token(token) when is_binary(token) do
     validate_token(%Token{access_token: token})
   end
