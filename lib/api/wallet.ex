@@ -37,7 +37,7 @@ defmodule Paytm.API.Wallet do
                 "paytmWalletBalance" => paytm_wallet_balance,
                 "otherSubWalletBalance" => sub_wallet_balance,
               }}} ->
-        {:ok, Balance.new(:full_units, round(total_balance), round(paytm_wallet_balance), round(sub_wallet_balance))}
+        {:ok, Balance.new(:full_units, total_balance, paytm_wallet_balance, sub_wallet_balance)}
       {:error, message, code} -> {:error, message, code}
       _ -> {:error, "An unknown error occurred", nil}
     end

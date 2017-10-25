@@ -16,9 +16,9 @@ defmodule Paytm.API.Wallet.Balance do
 
   def new(:full_units, total_balance, paytm_wallet_balance, sub_wallet_balance) do
     %__MODULE__{
-      total_balance:        Money.new(total_balance        * 100, :INR),
-      paytm_wallet_balance: Money.new(paytm_wallet_balance * 100, :INR),
-      sub_wallet_balance:   Money.new(sub_wallet_balance   * 100, :INR),
+      total_balance:        Money.new(trunc(total_balance        * 100), :INR),
+      paytm_wallet_balance: Money.new(trunc(paytm_wallet_balance * 100), :INR),
+      sub_wallet_balance:   Money.new(trunc(sub_wallet_balance   * 100), :INR),
     }
   end
 end
