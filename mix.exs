@@ -4,7 +4,7 @@ defmodule Paytm.Mixfile do
   def project do
     [
       app: :paytm,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       deps: deps(),
@@ -32,6 +32,7 @@ defmodule Paytm.Mixfile do
     [
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.1"},
+      {:money, "~> 1.2.1"},
       {:exvcr, "~> 0.8", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev},
     ]
