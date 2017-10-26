@@ -16,6 +16,13 @@ defmodule Paytm.API.Wallet do
 
   @error_codes %{
     "403" => :unauthorized_access,
+    "404" => :user_not_found,
+    "408" => :request_timed_out,
+    "500" => :internal_server_error,
+    "AM_1001" => :unknown_error,
+    "GE_0001" => :unknown_error,
+    "CBM_1001" => :incorrect_merchant_details,
+    "CBM_1002" => :incorrect_payee_details,
   }
 
   @spec fetch_balance(token :: Token.t | String.t)
@@ -42,6 +49,7 @@ defmodule Paytm.API.Wallet do
       _ -> {:error, "An unknown error occurred", nil}
     end
   end
+
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
   defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
