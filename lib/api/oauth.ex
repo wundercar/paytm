@@ -1,22 +1,5 @@
 defmodule Paytm.API.OAuth do
-  use   HTTPoison.Base
   alias Paytm.API.OAuth.Token
-
-  defp config(key) when is_atom(key) do
-    Application.get_env(:paytm, Paytm.API.OAuth)[key]
-  end
-
-  defp base_url,       do: config(:base_url)
-  defp client_id,      do: config(:client_id)
-  defp client_secret,  do: config(:client_secret)
-
-  defp authorization_header do
-    {"Authorization", "Basic #{Base.encode64("#{client_id()}:#{client_secret()}")}}"}
-  end
-
-  def process_url(url) do
-    base_url() <> url
-  end
 
   @error_codes %{
     "403" => :invalid_otp,
@@ -41,11 +24,12 @@ defmodule Paytm.API.OAuth do
     {:error, "`phone` must be a non-nil string", :invalid_mobile}
   end
   def send_otp(%{email: _, phone: _} = params) do
-    params = Map.merge(params, %{clientId: client_id(), scope: "wallet", responseType: "token"})
+    params = Map.merge(params, %{clientId: config(:client_id), scope: "wallet", responseType: "token"})
     body = Poison.encode!(params)
 
     "/signin/otp"
-    |> post(body)
+    |> add_base_url
+    |> HTTPoison.post(body)
     |> handle_response
     |> case do
       {:ok, %{"status" => "SUCCESS", "responseCode" => "01", "state" => state}} ->
@@ -65,7 +49,8 @@ defmodule Paytm.API.OAuth do
     body = Poison.encode!(%{otp: otp, state: state})
 
     "/signin/validate/otp"
-    |> post(body, [authorization_header()])
+    |> add_base_url
+    |> HTTPoison.post(body, [authorization_header()])
     |> handle_response
     |> case do
       {:ok, %{"access_token" => access_token,
@@ -89,7 +74,8 @@ defmodule Paytm.API.OAuth do
   end
   def validate_token(%Token{access_token: access_token} = token) do
     "/user/details"
-    |> get([{"session_token", access_token}])
+    |> add_base_url
+    |> HTTPoison.get([{"session_token", access_token}])
     |> handle_response
     |> case do
       {:ok, %{"id" => customer_id,
@@ -106,6 +92,20 @@ defmodule Paytm.API.OAuth do
     end
   end
 
+  defp config(key) when is_atom(key) do
+    Application.get_env(:paytm, Paytm.API.OAuth)[key]
+  end
+
+  defp add_base_url(url) do
+    config(:base_url)
+    |> URI.merge(url)
+    |> URI.to_string
+  end
+
+  defp authorization_header do
+    {"Authorization", "Basic #{Base.encode64("#{config(:client_id)}:#{config(:client_secret)}")}}"}
+  end
+
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
   defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
@@ -118,6 +118,6 @@ defmodule Paytm.API.OAuth do
   defp handle_body(%{"status" => "FAILURE", "responseCode" => code, "message" => message}), do: {:error, message, @error_codes[code]}
   defp handle_body(%{} = body), do: {:ok, body}
 
-  def to_integer(integer) when is_integer(integer), do: integer
-  def to_integer(string) when is_binary(string), do: String.to_integer(string)
+  defp to_integer(integer) when is_integer(integer), do: integer
+  defp to_integer(string) when is_binary(string), do: String.to_integer(string)
 end

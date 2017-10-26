@@ -1,18 +1,6 @@
 defmodule Paytm.API.Wallet do
-  use   HTTPoison.Base
   alias Paytm.API.OAuth.Token
   alias Paytm.API.Wallet.Balance
-
-  defp config(key) when is_atom(key) do
-    Application.get_env(:paytm, Paytm.API.Wallet)[key]
-  end
-
-  defp base_url,          do: config(:base_url)
-  defp check_balance_url, do: config(:check_balance_url)
-
-  def process_url(url) do
-    base_url() <> url
-  end
 
   @error_codes %{
     "403" => :unauthorized_access,
@@ -32,7 +20,7 @@ defmodule Paytm.API.Wallet do
     fetch_balance(%Token{access_token: token})
   end
   def fetch_balance(%Token{access_token: access_token}) do
-    check_balance_url()
+    config(:check_balance_url)
     |> HTTPoison.get([{"content-type", "application/json"}, {"ssotoken", access_token}])
     |> handle_response
     |> case do
@@ -50,6 +38,15 @@ defmodule Paytm.API.Wallet do
     end
   end
 
+  defp config(key) when is_atom(key) do
+    Application.get_env(:paytm, Paytm.API.Wallet)[key]
+  end
+
+  defp add_base_url(url) do
+    config(:base_url)
+    |> URI.merge(url)
+    |> URI.to_string
+  end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
   defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
