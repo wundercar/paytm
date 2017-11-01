@@ -14,4 +14,5 @@
   "money": {:hex, :money, "1.2.1", "fdcc7b021b894dbcc2cd0f57d2ccdd2224eced747231337a849424ffaa196b13", [], [{:ecto, "~> 1.0 or ~> 2.0 or ~> 2.1", [hex: :ecto, repo: "hexpm", optional: true]}, {:phoenix_html, "~> 2.0", [hex: :phoenix_html, repo: "hexpm", optional: true]}], "hexpm"},
   "poison": {:hex, :poison, "3.1.0", "d9eb636610e096f86f25d9a46f35a9facac35609a7591b3be3326e99a0484665", [], [], "hexpm"},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.1", "28a4d65b7f59893bc2c7de786dec1e1555bd742d336043fe644ae956c3497fbe", [:make, :rebar], [], "hexpm"},
-  "unicode_util_compat": {:hex, :unicode_util_compat, "0.3.1", "a1f612a7b512638634a603c8f401892afbf99b8ce93a45041f8aaca99cadb85e", [], [], "hexpm"}}
+  "unicode_util_compat": {:hex, :unicode_util_compat, "0.3.1", "a1f612a7b512638634a603c8f401892afbf99b8ce93a45041f8aaca99cadb85e", [], [], "hexpm"},
+  "uuid": {:hex, :uuid, "1.1.8", "e22fc04499de0de3ed1116b770c7737779f226ceefa0badb3592e64d5cfb4eb9", [], [], "hexpm"}}
