@@ -48,10 +48,11 @@ defmodule Paytm.API.Wallet do
           token :: Token.t | String.t,
           options :: [channel_id: String.t]
         ) :: {:ok, params :: map} | {:error, message :: String.t, code :: nil}
-  def add_money(money, order_id, customer_id, token) when is_binary(token) and token != "" do
-    add_money(money, order_id, customer_id, %Token{access_token: token})
+  def add_money(money, order_id, customer_id, token, options \\ [])
+  def add_money(money, order_id, customer_id, token, options) when is_binary(token) and token != "" do
+    add_money(money, order_id, customer_id, %Token{access_token: token}, options)
   end
-  def add_money(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token}, options \\ []) do
+  def add_money(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token}, options) do
     params = %{
       MID: config(:merchant_id),
       CALLBACK_URL: config(:callback_url),
@@ -152,7 +153,7 @@ defmodule Paytm.API.Wallet do
   end
   defp handle_body(%{} = body), do: {:ok, body}
 
-  def extract_transaction_from_withdrawal_response(response) do
+  defp extract_transaction_from_withdrawal_response(response) do
     %Transaction{
       id: response["TxnId"],
       merchant_id: response["MID"],
@@ -167,12 +168,12 @@ defmodule Paytm.API.Wallet do
     }
   end
 
-  def paytm_amount_to_cents(string) when is_binary(string) do
+  defp paytm_amount_to_cents(string) when is_binary(string) do
     string
     |> String.to_float
     |> paytm_amount_to_cents
   end
-  def paytm_amount_to_cents(float) when is_float(float) do
+  defp paytm_amount_to_cents(float) when is_float(float) do
     trunc(float * 100)
   end
 end
