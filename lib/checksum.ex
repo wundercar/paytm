@@ -3,7 +3,7 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  @spec generate(parameters :: map, uriencoded :: bool, salt :: String.t) :: String.t
+  @spec generate(parameters :: map, uriencoded :: boolean, salt :: String.t) :: String.t
   def generate(parameters, uriencoded \\ true, salt \\ generate_salt()) do
     checksum =
       parameters
@@ -23,7 +23,7 @@ defmodule Paytm.Checksum do
     end
   end
 
-  @spec valid_checksum?(parameters :: map, checksum :: String.t) :: bool
+  @spec valid_checksum?(parameters :: map, checksum :: String.t) :: boolean
   def valid_checksum?(parameters, checksum) do
     salt =
       checksum
@@ -49,14 +49,6 @@ defmodule Paytm.Checksum do
     :crypto.hash(:sha256, string)
     |> Base.encode16
     |> String.downcase
-  end
-
-  defp pad_newlines_at_60(str) do
-    str
-    |> Stream.unfold(&String.split_at(&1, 60))
-    |> Enum.take_while(&(&1 != ""))
-    |> Enum.join("\n")
-    |> append("\n")
   end
 
   defp pad(data, block_size) do
