@@ -6,7 +6,7 @@ defmodule Paytm.API.Wallet.Transaction do
     order_id:            String.t,
     customer_id:         String.t,
     money:               Money.t,
-    successful:          bool,
+    successful:          boolean,
     payment_mode:        String.t,
     bank_name:           String.t,
     bank_transaction_id: String.t,
