@@ -2,19 +2,25 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  def generate(parameters) do
+  def generate(parameters, uriencoded \\ true) do
     salt = generate_salt()
 
-    parameters
-    |> Map.keys
-    |> Enum.sort
-    |> Enum.map(&(parameters[&1]))
-    |> Enum.join("|")
-    |> append("|" <> salt)
-    |> hash
-    |> append(salt)
-    |> encrypt
-    |> pad_newlines_at_60
+    checksum =
+      parameters
+      |> Map.keys
+      |> Enum.sort
+      |> Enum.map(&(parameters[&1]))
+      |> Enum.join("|")
+      |> append("|" <> salt)
+      |> hash
+      |> append(salt)
+      |> encrypt
+
+    if uriencoded do
+      URI.encode(checksum, &URI.char_unreserved?(&1))
+    else
+      checksum
+    end
   end
 
   def verify(parameters, checksum) do

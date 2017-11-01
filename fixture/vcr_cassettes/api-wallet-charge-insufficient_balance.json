@@ -1,0 +1,138 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"bar@baz.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"1a5d7549-6fff-4e4b-b861-4f6e488336c0\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:16:24 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"state\":\"1a5d7549-6fff-4e4b-b861-4f6e488336c0\",\"otp\":\"489871\"}",
+      "headers": {
+        "Authorization": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/validate/otp"
+    },
+    "response": {
+      "body": "{\"access_token\":\"810d0508-c1d9-4d0e-ada1-e6e009eda9ad\",\"expires\":\"1516618298430\",\"scope\":\"wallet\",\"resourceOwnerId\":\"11065108\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:16:26 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "127",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "session_token": "810d0508-c1d9-4d0e-ada1-e6e009eda9ad"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/user/details"
+    },
+    "response": {
+      "body": "{\"id\":11065108,\"email\":\"shrikant@pacetravels.in\",\"mobile\":\"7777777777\",\"expires\":\"1516618298430\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:16:27 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "97",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "content-type": "application/json",
+        "ssotoken": "***"
+      },
+      "method": "get",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://trust-uat.paytm.in/service/checkUserBalance"
+    },
+    "response": {
+      "body": "{\"requestGuid\":null,\"orderId\":null,\"status\":\"SUCCESS\",\"statusCode\":\"SUCCESS\",\"statusMessage\":\"SUCCESS\",\"response\":{\"totalBalance\":9997.0,\"paytmWalletBalance\":9997.0,\"otherSubWalletBalance\":0,\"ownerGuid\":\"d5840da0-0120-11e4-874c-000c292554b0\",\"walletGrade\":\"Premium\",\"ssoId\":\"11065108\",\"subWalletDetailsList\":[{\"id\":1,\"displayName\":\"Paytm Wallet\",\"balance\":9997.0,\"imageUrl\":\"http://paytm.com.logo\",\"walletType\":\"USER\",\"subWalletType\":0,\"status\":1,\"message\":\"ACTIVE\"}]}}",
+      "headers": {
+        "Server": "nginx/1.8.1",
+        "Date": "Wed, 01 Nov 2017 15:16:27 GMT",
+        "Content-Type": "application/json;charset=UTF-8",
+        "Transfer-Encoding": "chunked",
+        "Connection": "keep-alive",
+        "Set-Cookie": "***",
+        "Accept-Encoding": "gzip"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "JsonData={\"TxnAmount\":\"10997.00\",\"SSOToken\":\"SSO_TOKEN\",\"ReqType\":\"WITHDRAW\",\"PaymentMode\":\"PPI\",\"OrderId\":\"abc123\",\"MID\":\"MID\",\"IndustryType\":\"Retail\",\"DeviceId\":\"7777777777\",\"OrderId\":\"abc123\",\"Currency\":\"INR\",\"CheckSum\":\"TFF%2BAZWvdqu0LzVBOwXdBLSP71fOi5GGA8whvb7mQ8ur%2Bau974QUe4tm4NgkNe336XHkeZfTzsX3%2B5o4HWwqKPlorEySqSb7V8q9nGohPao%3D\",\"Channel\":\"WEB\",\"AuthMode\":\"USRPWD\",\"AppIP\":\"127.0.0.1\"}",
+      "headers": [],
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"
+    },
+    "response": {
+      "body": "{\"TxnId\":70000351264,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"10997.00\",\"BankTxnId\":\"\",\"ResponseCode\":\"235\",\"ResponseMessage\":\"You don't have sufficient balance in your account. Please try with a different account.\",\"Status\":\"TXN_FAILURE\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"GltZP/yiSlfaLIFGKRZ+KRBt2Ap7vv48dm1JvRXCEy7Jv1RMqSLNJSRvZYXsC9B98EdLtQe+Ym3Tf/TrEMR5NnNyUTiGmmriVKPPE8F/Mh0=\",\"OrderId\":\"abc123\",\"MBID\":\"MBID\"}",
+      "headers": {
+        "Server": "nginx/1.6.2",
+        "Content-Type": "application/json",
+        "Content-Length": "489",
+        "Date": "Wed, 01 Nov 2017 15:16:28 GMT",
+        "Connection": "keep-alive",
+        "Set-Cookie": "***"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
