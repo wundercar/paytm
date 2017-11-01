@@ -1,0 +1,109 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"bar@baz.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:36:43 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\",\"otp\":\"489871\"}",
+      "headers": {
+        "Authorization": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/validate/otp"
+    },
+    "response": {
+      "body": "{\"access_token\":\"810d0508-c1d9-4d0e-ada1-e6e009eda9ad\",\"expires\":\"1516618298430\",\"scope\":\"wallet\",\"resourceOwnerId\":\"11065108\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "127",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "session_token": "810d0508-c1d9-4d0e-ada1-e6e009eda9ad"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/user/details"
+    },
+    "response": {
+      "body": "{\"id\":11065108,\"email\":\"shrikant@pacetravels.in\",\"mobile\":\"7777777777\",\"expires\":\"1516618298430\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "97",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "JsonData={\"TxnAmount\":\"1.00\",\"SSOToken\":\"SSO_TOKEN\",\"ReqType\":\"WITHDRAW\",\"PaymentMode\":\"PPI\",\"OrderId\":\"abc123\",\"MID\":\"MID\",\"IndustryType\":\"Retail\",\"DeviceId\":\"7777777777\",\"CustId\":\"abc123\",\"Currency\":\"INR\",\"CheckSum\":\"CHECKSUM\",\"Channel\":\"WEB\",\"AuthMode\":\"USRPWD\",\"AppIP\":\"127.0.0.1\"}",
+      "headers": [],
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"
+    },
+    "response": {
+      "body": "{\"TxnId\":70000351277,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"948928\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"CHECKSUM\",\"CustId\":\"abc123\",\"MBID\":\"MBID\"}",
+      "headers": {
+        "Server": "nginx/1.6.2",
+        "Content-Type": "application/json",
+        "Content-Length": "418",
+        "Date": "Wed, 01 Nov 2017 15:36:47 GMT",
+        "Connection": "keep-alive",
+        "Set-Cookie": "***"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
