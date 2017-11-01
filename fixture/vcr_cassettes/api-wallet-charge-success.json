@@ -9,12 +9,12 @@
       "url": "https://accounts-uat.paytm.com/signin/otp"
     },
     "response": {
-      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"61ec1092-20f5-4cf8-a00a-9cf83e0788e1\"}",
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\"}",
       "headers": {
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:16:13 GMT",
+        "Date": "Wed, 01 Nov 2017 15:36:43 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -27,7 +27,7 @@
   },
   {
     "request": {
-      "body": "{\"state\":\"61ec1092-20f5-4cf8-a00a-9cf83e0788e1\",\"otp\":\"489871\"}",
+      "body": "{\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\",\"otp\":\"489871\"}",
       "headers": {
         "Authorization": "***"
       },
@@ -42,7 +42,7 @@
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:16:15 GMT",
+        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -70,7 +70,7 @@
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:16:16 GMT",
+        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -83,7 +83,7 @@
   },
   {
     "request": {
-      "body": "JsonData={\"TxnAmount\":\"1.00\",\"SSOToken\":\"SSO_TOKEN\",\"ReqType\":\"WITHDRAW\",\"PaymentMode\":\"PPI\",\"OrderId\":\"abc123\",\"MID\":\"MID\",\"IndustryType\":\"Retail\",\"DeviceId\":\"7777777777\",\"OrderId\":\"abc123\",\"Currency\":\"INR\",\"CheckSum\":\"c9Bf%2Fcb%2BB%2F01OY8A8vsVk7Ae5LL5UrYQgldpkCt1w%2BbW3epuhngPfTMCHe4OCL9MJN5aDaqLXfkJrTVKvVugAf9YwtJ9blvSj6ptoHHfm70%3D\",\"Channel\":\"WEB\",\"AuthMode\":\"USRPWD\",\"AppIP\":\"127.0.0.1\"}",
+      "body": "JsonData={\"TxnAmount\":\"1.00\",\"SSOToken\":\"SSO_TOKEN\",\"ReqType\":\"WITHDRAW\",\"PaymentMode\":\"PPI\",\"OrderId\":\"abc123\",\"MID\":\"MID\",\"IndustryType\":\"Retail\",\"DeviceId\":\"7777777777\",\"CustId\":\"abc123\",\"Currency\":\"INR\",\"CheckSum\":\"CHECKSUM\",\"Channel\":\"WEB\",\"AuthMode\":\"USRPWD\",\"AppIP\":\"127.0.0.1\"}",
       "headers": [],
       "method": "post",
       "options": {
@@ -93,12 +93,12 @@
       "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"
     },
     "response": {
-      "body": "{\"TxnId\":70000351263,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"948923\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"SgqKHzIyhbAbXmKRIuHIrmt2hGBwM3o++tFUT33nUC9b3E+5Yn+JZo3LDXOd3eWCtxKGG0eKg887Q90FLxI54wXfBAkHyj90HoFa1/7m1tY=\",\"OrderId\":\"abc123\",\"MBID\":\"MBID\"}",
+      "body": "{\"TxnId\":70000351277,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"948928\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"CHECKSUM\",\"CustId\":\"abc123\",\"MBID\":\"MBID\"}",
       "headers": {
         "Server": "nginx/1.6.2",
         "Content-Type": "application/json",
         "Content-Length": "418",
-        "Date": "Wed, 01 Nov 2017 15:16:24 GMT",
+        "Date": "Wed, 01 Nov 2017 15:36:47 GMT",
         "Connection": "keep-alive",
         "Set-Cookie": "***"
       },

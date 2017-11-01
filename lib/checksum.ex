@@ -1,10 +1,10 @@
 defmodule Paytm.Checksum do
+  @salt_length 4
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  def generate(parameters, uriencoded \\ true) do
-    salt = generate_salt()
-
+  @spec generate(parameters :: map, uriencoded :: bool, salt :: String.t) :: String.t
+  def generate(parameters, uriencoded \\ true, salt \\ generate_salt()) do
     checksum =
       parameters
       |> Map.keys
@@ -23,8 +23,14 @@ defmodule Paytm.Checksum do
     end
   end
 
-  def verify(parameters, checksum) do
-    # TODO
+  @spec valid_checksum?(parameters :: map, checksum :: String.t) :: bool
+  def valid_checksum?(parameters, checksum) do
+    salt =
+      checksum
+      |> decrypt
+      |> String.slice(-@salt_length, @salt_length)
+
+    checksum == generate(parameters, false, salt)
   end
 
   defp encrypt(binary, key \\ merchant_key()) do
@@ -65,7 +71,7 @@ defmodule Paytm.Checksum do
 
   defp append(string, append), do: string <> append
 
-  defp generate_salt(length \\ 4) do
+  defp generate_salt(length \\ @salt_length) do
     length
     |> :crypto.strong_rand_bytes
     |> Base.url_encode64

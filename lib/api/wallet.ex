@@ -41,6 +41,33 @@ defmodule Paytm.API.Wallet do
     end
   end
 
+  @spec add_money(
+          money :: Money.t,
+          order_id :: String.t,
+          customer_id :: String.t,
+          token :: Token.t | String.t,
+          options :: [channel_id: String.t]
+        ) :: {:ok, params :: map} | {:error, message :: String.t, code :: nil}
+  def add_money(money, order_id, customer_id, token) when is_binary(token) and token != "" do
+    add_money(money, order_id, customer_id, %Token{access_token: token})
+  end
+  def add_money(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token}, options \\ []) do
+    params = %{
+      MID: config(:merchant_id),
+      CALLBACK_URL: config(:callback_url),
+      REQUEST_TYPE: "ADD_MONEY",
+      ORDER_ID: order_id,
+      CUST_ID: customer_id,
+      TXN_AMOUNT: amount_to_decimal_string(amount),
+      CHANNEL_ID: options[:channel] || config(:default_channel),
+      INDUSTRY_TYPE_ID: config(:merchant_industry),
+      WEBSITE: config(:merchant_website),
+      SSO_TOKEN: token
+    }
+
+    {:ok, Map.put(params, :CHECKSUMHASH, Checksum.generate(params, false))}
+  end
+
   @spec charge(
           money :: Money.t,
           order_id :: String.t,
