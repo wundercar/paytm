@@ -48,6 +48,14 @@ defmodule Paytm.API.Wallet do
     |> URI.to_string
   end
 
+  defp paytm_json_encode(map) do
+    "JsonData=" <> Poison.encode!(map)
+  end
+
+  defp amount_to_decimal_string(amount_cents) do
+    :erlang.float_to_binary(amount_cents / 100, decimals: 2)
+  end
+
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
   defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
