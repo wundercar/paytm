@@ -3,24 +3,17 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  @spec generate(parameters :: map, uriencoded :: boolean, salt :: String.t) :: String.t
-  def generate(parameters, uriencoded \\ true, salt \\ generate_salt()) do
-    checksum =
-      parameters
-      |> Map.keys
-      |> Enum.sort
-      |> Enum.map(&(parameters[&1]))
-      |> Enum.join("|")
-      |> append("|" <> salt)
-      |> hash
-      |> append(salt)
-      |> encrypt
-
-    if uriencoded do
-      URI.encode(checksum, &URI.char_unreserved?(&1))
-    else
-      checksum
-    end
+  @spec generate(parameters :: map, salt :: String.t) :: String.t
+  def generate(parameters, salt \\ generate_salt()) do
+    parameters
+    |> Map.keys
+    |> Enum.sort
+    |> Enum.map(&(parameters[&1]))
+    |> Enum.join("|")
+    |> append("|" <> salt)
+    |> hash
+    |> append(salt)
+    |> encrypt
   end
 
   @spec valid_checksum?(parameters :: map, checksum :: String.t) :: boolean
@@ -30,7 +23,7 @@ defmodule Paytm.Checksum do
       |> decrypt
       |> String.slice(-@salt_length, @salt_length)
 
-    checksum == generate(parameters, false, salt)
+    checksum == generate(parameters, salt)
   end
 
   defp encrypt(binary, key \\ merchant_key()) do
