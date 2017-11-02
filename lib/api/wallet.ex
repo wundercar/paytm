@@ -99,10 +99,33 @@ defmodule Paytm.API.Wallet do
       |> Map.put(:CheckSum, Checksum.generate(params))
       |> paytm_json_encode
 
-    "/oltp/HANDLER_FF/withdrawScw"
-    |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
-    |> handle_response
+    response =
+      "/oltp/HANDLER_FF/withdrawScw"
+      |> add_base_url
+      |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+      |> handle_response
+
+    case response do
+      {:ok, body} ->
+        transaction = %Transaction{
+          id: body["TxnId"],
+          merchant_id: body["MID"],
+          merchant_uid: body["MBID"],
+          order_id: body["OrderId"],
+          customer_id: body["CustId"],
+          money: Money.new(paytm_amount_to_cents(body["TxnAmount"]), :INR),
+          successful: body["Status"] == "TXN_SUCCESS",
+          payment_mode: body["PaymentMode"],
+          bank_name: body["BankName"],
+          bank_transaction_id: body["BankTxnId"],
+        }
+        if transaction.successful do
+          {:ok, transaction}
+        else
+          {:error, body["ResponseMessage"], body["ResponseCode"], transaction}
+        end
+      error -> error
+    end
   end
 
   @spec refund(transaction :: Transaction.t, reference :: String.t, refund_money :: Money.t | nil) :: any
@@ -152,7 +175,7 @@ defmodule Paytm.API.Wallet do
 
   defp paytm_json_encode(map) do
     map_with_uri_encoded_values =
-      for {k, v} <- map, into: %{}, do: {k, URI.encode(v, &URI.char_unreserved?(&1))}
+      for {k, v} <- map, into: %{}, do: {k, URI.encode("#{v}", &URI.char_unreserved?(&1))}
 
     "JsonData=" <> Poison.encode!(map_with_uri_encoded_values)
   end
@@ -176,14 +199,6 @@ defmodule Paytm.API.Wallet do
   defp handle_body(%{"status" => "FAILURE", "statusCode" => code, "statusMessage" => message}) do
     {:error, message, @error_codes[code] || code}
   end
-  defp handle_body(%{"ResponseCode" => code, "ResponseMessage" => message, "Status" => status} = response) do
-    transaction = extract_transaction_from_withdrawal_response(response)
-    if status == "TXN_SUCCESS" do
-      {:ok, transaction}
-    else
-      {:error, message, code, transaction}
-    end
-  end
   defp handle_body(%{"Error" => error}) do
     if Regex.match?(@paytm_error_regex, error) do
       extracted = Regex.named_captures(@paytm_error_regex, error)
@@ -193,21 +208,6 @@ defmodule Paytm.API.Wallet do
     end
   end
   defp handle_body(%{} = body), do: {:ok, body}
-
-  defp extract_transaction_from_withdrawal_response(response) do
-    %Transaction{
-      id: response["TxnId"],
-      merchant_id: response["MID"],
-      merchant_uid: response["MBID"],
-      order_id: response["OrderId"],
-      customer_id: response["CustId"],
-      money: Money.new(paytm_amount_to_cents(response["TxnAmount"]), :INR),
-      successful: response["Status"] == "TXN_SUCCESS",
-      payment_mode: response["PaymentMode"],
-      bank_name: response["BankName"],
-      bank_transaction_id: response["BankTxnId"],
-    }
-  end
 
   defp paytm_amount_to_cents(string) when is_binary(string) do
     string
