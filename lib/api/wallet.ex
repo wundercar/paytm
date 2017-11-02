@@ -36,8 +36,10 @@ defmodule Paytm.API.Wallet do
                 "otherSubWalletBalance" => sub_wallet_balance,
               }}} ->
         {:ok, Balance.new(:full_units, total_balance, paytm_wallet_balance, sub_wallet_balance)}
-      {:error, message, code} -> {:error, message, code}
-      _ -> {:error, "An unknown error occurred", nil}
+      {:ok, %{"status" => "FAILURE",
+              "statusCode" => code,
+              "statusMessage" => message}} ->
+        {:error, message, @error_codes[code] || code}
     end
   end
 
@@ -99,13 +101,11 @@ defmodule Paytm.API.Wallet do
       |> Map.put(:CheckSum, Checksum.generate(params))
       |> paytm_json_encode
 
-    response =
-      "/oltp/HANDLER_FF/withdrawScw"
-      |> add_base_url
-      |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
-      |> handle_response
-
-    case response do
+    "/oltp/HANDLER_FF/withdrawScw"
+    |> add_base_url
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> handle_response
+    |> case do
       {:ok, body} ->
         transaction = %Transaction{
           id: body["TxnId"],
@@ -123,6 +123,13 @@ defmodule Paytm.API.Wallet do
           {:ok, transaction}
         else
           {:error, body["ResponseMessage"], body["ResponseCode"], transaction}
+        end
+      {:ok, %{"Error" => error}} ->
+        if Regex.match?(@paytm_error_regex, error) do
+          extracted = Regex.named_captures(@paytm_error_regex, error)
+          {:error, extracted["message"], extracted["code"], nil}
+        else
+          {:error, error, nil, nil}
         end
       error -> error
     end
@@ -159,13 +166,11 @@ defmodule Paytm.API.Wallet do
       |> Map.put(:CHECKSUM, Checksum.generate(params))
       |> paytm_json_encode
 
-    response =
-      "/oltp/HANDLER_INTERNAL/REFUND"
-      |> add_base_url
-      |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
-      |> handle_response
-
-    case response do
+    "/oltp/HANDLER_INTERNAL/REFUND"
+    |> add_base_url
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> handle_response
+    |> case do
       {:ok, %{"STATUS" => "TXN_SUCCESS"} = body} ->
         {:ok, body["REFUNDID"]}
       {:ok, %{"STATUS" => "TXN_FAILURE"} = body} ->
@@ -206,17 +211,6 @@ defmodule Paytm.API.Wallet do
   end
   defp handle_response(_), do: {:error, "An unknown error occurred", nil}
 
-  defp handle_body(%{"status" => "FAILURE", "statusCode" => code, "statusMessage" => message}) do
-    {:error, message, @error_codes[code] || code}
-  end
-  defp handle_body(%{"Error" => error}) do
-    if Regex.match?(@paytm_error_regex, error) do
-      extracted = Regex.named_captures(@paytm_error_regex, error)
-      {:error, extracted["message"], extracted["code"], nil}
-    else
-      {:error, error, nil, nil}
-    end
-  end
   defp handle_body(%{} = body), do: {:ok, body}
 
   defp paytm_amount_to_cents(string) when is_binary(string) do
