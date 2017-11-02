@@ -82,4 +82,26 @@ defmodule Paytm.API.WalletTest do
       assert {:ok, %{REQUEST_TYPE: "ADD_MONEY"}} = Wallet.add_money(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
     end
   end
+
+  describe "refund/2" do
+    @tag :pending
+    test "it successfully refunds transactions" do
+      use_cassette "api-wallet-refund-success", match_requests_on: [:request_body] do
+        assert {:ok, state, _} = OAuth.send_otp(%{email: @email, phone: @existing_user})
+        assert {:ok, %Token{} = token} = OAuth.validate_otp(@existing_user_otp, state)
+        assert {:ok, %Token{} = token} = OAuth.validate_token(token)
+
+        assert {:ok, %Balance{} = balance_before} = Wallet.fetch_balance(token)
+
+        assert {:ok, %Transaction{successful: true} = transaction} =
+          Wallet.charge(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
+
+        assert {:ok, _refund_id} = Wallet.refund(transaction, Helpers.random_id)
+
+        assert {:ok, %Balance{} = balance_after} = Wallet.fetch_balance(token)
+
+        assert Money.equal?(balance_before, balance_after)
+      end
+    end
+  end
 end
