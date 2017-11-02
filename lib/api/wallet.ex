@@ -46,7 +46,7 @@ defmodule Paytm.API.Wallet do
           order_id :: String.t,
           customer_id :: String.t,
           token :: Token.t | String.t,
-          options :: [channel_id: String.t]
+          options :: [channel_id: String.t, callback_url: String.t]
         ) :: {:ok, params :: map} | {:error, message :: String.t, code :: nil}
   def add_money(money, order_id, customer_id, token, options \\ [])
   def add_money(money, order_id, customer_id, token, options) when is_binary(token) and token != "" do
@@ -55,7 +55,7 @@ defmodule Paytm.API.Wallet do
   def add_money(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token}, options) do
     params = %{
       MID: config(:merchant_id),
-      CALLBACK_URL: config(:callback_url),
+      CALLBACK_URL: options[:callback_url] || config(:callback_url),
       REQUEST_TYPE: "ADD_MONEY",
       ORDER_ID: order_id,
       CUST_ID: customer_id,
@@ -66,7 +66,7 @@ defmodule Paytm.API.Wallet do
       SSO_TOKEN: token
     }
 
-    {:ok, Map.put(params, :CHECKSUMHASH, Checksum.generate(params, false))}
+    {:ok, Map.put(params, :CHECKSUMHASH, Checksum.generate(params))}
   end
 
   @spec charge(
@@ -151,7 +151,10 @@ defmodule Paytm.API.Wallet do
   end
 
   defp paytm_json_encode(map) do
-    "JsonData=" <> Poison.encode!(map)
+    map_with_uri_encoded_values =
+      for {k, v} <- map, into: %{}, do: {k, URI.encode(v, &URI.char_unreserved?(&1))}
+
+    "JsonData=" <> Poison.encode!(map_with_uri_encoded_values)
   end
 
   defp amount_to_decimal_string(%Money{amount: amount_cents}) do

@@ -9,12 +9,12 @@
       "url": "https://accounts-uat.paytm.com/signin/otp"
     },
     "response": {
-      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\"}",
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"c3ce99bb-6a82-4b46-9ee7-6cb149ec73f8\"}",
       "headers": {
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:36:43 GMT",
+        "Date": "Thu, 02 Nov 2017 11:52:48 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -27,7 +27,7 @@
   },
   {
     "request": {
-      "body": "{\"state\":\"85269731-af2b-4fca-b80c-05f17bbd17ea\",\"otp\":\"489871\"}",
+      "body": "{\"state\":\"c3ce99bb-6a82-4b46-9ee7-6cb149ec73f8\",\"otp\":\"489871\"}",
       "headers": {
         "Authorization": "***"
       },
@@ -42,7 +42,7 @@
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
+        "Date": "Thu, 02 Nov 2017 11:52:52 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -70,7 +70,7 @@
         "Access-Control-Allow-Headers": "*",
         "Cache-control": "no-cache=\"set-cookie\"",
         "Content-Type": "application/json",
-        "Date": "Wed, 01 Nov 2017 15:36:45 GMT",
+        "Date": "Thu, 02 Nov 2017 11:52:52 GMT",
         "Server": "nginx",
         "Set-Cookie": "***",
         "X-Frame-Options": "DENY",
@@ -93,12 +93,12 @@
       "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"
     },
     "response": {
-      "body": "{\"TxnId\":70000351277,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"948928\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"CHECKSUM\",\"CustId\":\"abc123\",\"MBID\":\"MBID\"}",
+      "body": "{\"TxnId\":70000353901,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"950127\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"CHECKSUM\",\"CustId\":\"abc123\",\"MBID\":\"MBID\"}",
       "headers": {
         "Server": "nginx/1.6.2",
         "Content-Type": "application/json",
         "Content-Length": "418",
-        "Date": "Wed, 01 Nov 2017 15:36:47 GMT",
+        "Date": "Thu, 02 Nov 2017 11:52:53 GMT",
         "Connection": "keep-alive",
         "Set-Cookie": "***"
       },
