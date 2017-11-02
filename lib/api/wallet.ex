@@ -128,7 +128,9 @@ defmodule Paytm.API.Wallet do
     end
   end
 
-  @spec refund(transaction :: Transaction.t, reference :: String.t, refund_money :: Money.t | nil) :: any
+  @spec refund(transaction :: Transaction.t, reference :: String.t, refund_money :: Money.t | nil)
+        :: {:ok, refund_id :: String.t} |
+           {:error, message :: String.t, code :: String.t}
   def refund(transaction, reference, amount \\ nil)
   def refund(%Transaction{money: %Money{currency: currency}}, _, _)
   when currency != :INR do
@@ -157,10 +159,18 @@ defmodule Paytm.API.Wallet do
       |> Map.put(:CHECKSUM, Checksum.generate(params))
       |> paytm_json_encode
 
-    "/oltp/HANDLER_INTERNAL/REFUND"
-    |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
-    |> handle_response
+    response =
+      "/oltp/HANDLER_INTERNAL/REFUND"
+      |> add_base_url
+      |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+      |> handle_response
+
+    case response do
+      {:ok, %{"STATUS" => "TXN_SUCCESS"} = body} ->
+        {:ok, body["REFUNDID"]}
+      {:ok, %{"STATUS" => "TXN_FAILURE"} = body} ->
+        {:error, body["RESPMSG"], body["RESPCODE"]}
+    end
   end
 
   defp config(key) when is_atom(key) do
