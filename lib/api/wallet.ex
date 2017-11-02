@@ -105,6 +105,41 @@ defmodule Paytm.API.Wallet do
     |> handle_response
   end
 
+  @spec refund(transaction :: Transaction.t, reference :: String.t, refund_money :: Money.t | nil) :: any
+  def refund(transaction, reference, amount \\ nil)
+  def refund(%Transaction{money: %Money{currency: currency}}, _, _)
+  when currency != :INR do
+    {:error, "Only INR is supported for Paytm refunds"}
+  end
+  def refund(%Transaction{money: %Money{currency: currency}}, _, %Money{currency: refund_currency})
+  when refund_currency != currency do
+    {:error, "Can only refund the same currency"}
+  end
+  def refund(%Transaction{money: %Money{amount: amount}}, _, %Money{amount: refund_amount})
+  when refund_amount > amount do
+    {:error, "Cannot refund more than the transaction value"}
+  end
+  def refund(transaction, reference, refund_money) do
+    params = %{
+      ORDERID: transaction.order_id,
+      REFUNDAMOUNT: amount_to_decimal_string(refund_money || transaction.money),
+      TXNID: transaction.id,
+      MID: transaction.merchant_id,
+      TXNTYPE: "REFUND",
+      REFID: reference,
+    }
+
+    body =
+      params
+      |> Map.put(:CHECKSUM, Checksum.generate(params))
+      |> paytm_json_encode
+
+    "/oltp/HANDLER_INTERNAL/REFUND"
+    |> add_base_url
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> handle_response
+  end
+
   defp config(key) when is_atom(key) do
     Application.get_env(:paytm, Paytm.API.Wallet)[key]
   end
@@ -119,6 +154,9 @@ defmodule Paytm.API.Wallet do
     "JsonData=" <> Poison.encode!(map)
   end
 
+  defp amount_to_decimal_string(%Money{amount: amount_cents}) do
+    amount_to_decimal_string(amount_cents)
+  end
   defp amount_to_decimal_string(amount_cents) do
     :erlang.float_to_binary(amount_cents / 100, decimals: 2)
   end
