@@ -36,8 +36,10 @@ defmodule Paytm.API.Wallet do
                 "otherSubWalletBalance" => sub_wallet_balance,
               }}} ->
         {:ok, Balance.new(:full_units, total_balance, paytm_wallet_balance, sub_wallet_balance)}
-      {:error, message, code} -> {:error, message, code}
-      _ -> {:error, "An unknown error occurred", nil}
+      {:ok, %{"status" => "FAILURE",
+              "statusCode" => code,
+              "statusMessage" => message}} ->
+        {:error, message, @error_codes[code] || code}
     end
   end
 
@@ -46,7 +48,7 @@ defmodule Paytm.API.Wallet do
           order_id :: String.t,
           customer_id :: String.t,
           token :: Token.t | String.t,
-          options :: [channel_id: String.t]
+          options :: [channel_id: String.t, callback_url: String.t]
         ) :: {:ok, params :: map} | {:error, message :: String.t, code :: nil}
   def add_money(money, order_id, customer_id, token, options \\ [])
   def add_money(money, order_id, customer_id, token, options) when is_binary(token) and token != "" do
@@ -55,7 +57,7 @@ defmodule Paytm.API.Wallet do
   def add_money(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token}, options) do
     params = %{
       MID: config(:merchant_id),
-      CALLBACK_URL: config(:callback_url),
+      CALLBACK_URL: options[:callback_url] || config(:callback_url),
       REQUEST_TYPE: "ADD_MONEY",
       ORDER_ID: order_id,
       CUST_ID: customer_id,
@@ -66,7 +68,7 @@ defmodule Paytm.API.Wallet do
       SSO_TOKEN: token
     }
 
-    {:ok, Map.put(params, :CHECKSUMHASH, Checksum.generate(params, false))}
+    {:ok, Map.put(params, :CHECKSUMHASH, Checksum.generate(params))}
   end
 
   @spec charge(
@@ -103,6 +105,77 @@ defmodule Paytm.API.Wallet do
     |> add_base_url
     |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
     |> handle_response
+    |> case do
+      {:ok, %{"Error" => error}} ->
+        if Regex.match?(@paytm_error_regex, error) do
+          extracted = Regex.named_captures(@paytm_error_regex, error)
+          {:error, extracted["message"], extracted["code"], nil}
+        else
+          {:error, error, nil, nil}
+        end
+      {:ok, body} ->
+        transaction = %Transaction{
+          id: body["TxnId"],
+          merchant_id: body["MID"],
+          merchant_uid: body["MBID"],
+          order_id: body["OrderId"],
+          customer_id: body["CustId"],
+          money: Money.new(paytm_amount_to_cents(body["TxnAmount"]), :INR),
+          successful: body["Status"] == "TXN_SUCCESS",
+          payment_mode: body["PaymentMode"],
+          bank_name: body["BankName"],
+          bank_transaction_id: body["BankTxnId"],
+        }
+        if transaction.successful do
+          {:ok, transaction}
+        else
+          {:error, body["ResponseMessage"], body["ResponseCode"], transaction}
+        end
+      error -> error
+    end
+  end
+
+  @spec refund(transaction :: Transaction.t, reference :: String.t, refund_money :: Money.t | nil)
+        :: {:ok, refund_id :: String.t} |
+           {:error, message :: String.t, code :: String.t}
+  def refund(transaction, reference, amount \\ nil)
+  def refund(%Transaction{money: %Money{currency: currency}}, _, _)
+  when currency != :INR do
+    {:error, "Only INR is supported for Paytm refunds"}
+  end
+  def refund(%Transaction{money: %Money{currency: currency}}, _, %Money{currency: refund_currency})
+  when refund_currency != currency do
+    {:error, "Can only refund the same currency"}
+  end
+  def refund(%Transaction{money: %Money{amount: amount}}, _, %Money{amount: refund_amount})
+  when refund_amount > amount do
+    {:error, "Cannot refund more than the transaction value"}
+  end
+  def refund(transaction, reference, refund_money) do
+    params = %{
+      ORDERID: transaction.order_id,
+      REFUNDAMOUNT: amount_to_decimal_string(refund_money || transaction.money),
+      TXNID: transaction.id,
+      MID: transaction.merchant_id,
+      TXNTYPE: "REFUND",
+      REFID: reference,
+    }
+
+    body =
+      params
+      |> Map.put(:CHECKSUM, Checksum.generate(params))
+      |> paytm_json_encode
+
+    "/oltp/HANDLER_INTERNAL/REFUND"
+    |> add_base_url
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> handle_response
+    |> case do
+      {:ok, %{"STATUS" => "TXN_SUCCESS"} = body} ->
+        {:ok, body["REFUNDID"]}
+      {:ok, %{"STATUS" => "TXN_FAILURE"} = body} ->
+        {:error, body["RESPMSG"], body["RESPCODE"]}
+    end
   end
 
   defp config(key) when is_atom(key) do
@@ -116,9 +189,15 @@ defmodule Paytm.API.Wallet do
   end
 
   defp paytm_json_encode(map) do
-    "JsonData=" <> Poison.encode!(map)
+    map_with_uri_encoded_values =
+      for {k, v} <- map, into: %{}, do: {k, URI.encode("#{v}", &URI.char_unreserved?(&1))}
+
+    "JsonData=" <> Poison.encode!(map_with_uri_encoded_values)
   end
 
+  defp amount_to_decimal_string(%Money{amount: amount_cents}) do
+    amount_to_decimal_string(amount_cents)
+  end
   defp amount_to_decimal_string(amount_cents) do
     :erlang.float_to_binary(amount_cents / 100, decimals: 2)
   end
@@ -132,41 +211,7 @@ defmodule Paytm.API.Wallet do
   end
   defp handle_response(_), do: {:error, "An unknown error occurred", nil}
 
-  defp handle_body(%{"status" => "FAILURE", "statusCode" => code, "statusMessage" => message}) do
-    {:error, message, @error_codes[code] || code}
-  end
-  defp handle_body(%{"ResponseCode" => code, "ResponseMessage" => message, "Status" => status} = response) do
-    transaction = extract_transaction_from_withdrawal_response(response)
-    if status == "TXN_SUCCESS" do
-      {:ok, transaction}
-    else
-      {:error, message, code, transaction}
-    end
-  end
-  defp handle_body(%{"Error" => error}) do
-    if Regex.match?(@paytm_error_regex, error) do
-      extracted = Regex.named_captures(@paytm_error_regex, error)
-      {:error, extracted["message"], extracted["code"], nil}
-    else
-      {:error, error, nil, nil}
-    end
-  end
   defp handle_body(%{} = body), do: {:ok, body}
-
-  defp extract_transaction_from_withdrawal_response(response) do
-    %Transaction{
-      id: response["TxnId"],
-      merchant_id: response["MID"],
-      merchant_uid: response["MBID"],
-      order_id: response["OrderId"],
-      customer_id: response["CustId"],
-      money: Money.new(paytm_amount_to_cents(response["TxnAmount"]), :INR),
-      successful: response["Status"] == "TXN_SUCCESS",
-      payment_mode: response["PaymentMode"],
-      bank_name: response["BankName"],
-      bank_transaction_id: response["BankTxnId"],
-    }
-  end
 
   defp paytm_amount_to_cents(string) when is_binary(string) do
     string
