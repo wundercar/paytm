@@ -106,6 +106,13 @@ defmodule Paytm.API.Wallet do
     |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
     |> handle_response
     |> case do
+      {:ok, %{"Error" => error}} ->
+        if Regex.match?(@paytm_error_regex, error) do
+          extracted = Regex.named_captures(@paytm_error_regex, error)
+          {:error, extracted["message"], extracted["code"], nil}
+        else
+          {:error, error, nil, nil}
+        end
       {:ok, body} ->
         transaction = %Transaction{
           id: body["TxnId"],
@@ -123,13 +130,6 @@ defmodule Paytm.API.Wallet do
           {:ok, transaction}
         else
           {:error, body["ResponseMessage"], body["ResponseCode"], transaction}
-        end
-      {:ok, %{"Error" => error}} ->
-        if Regex.match?(@paytm_error_regex, error) do
-          extracted = Regex.named_captures(@paytm_error_regex, error)
-          {:error, extracted["message"], extracted["code"], nil}
-        else
-          {:error, error, nil, nil}
         end
       error -> error
     end
