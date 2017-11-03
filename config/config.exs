@@ -8,7 +8,7 @@ config :paytm, Paytm.API.Wallet,
   merchant_website:  System.get_env("PAYTM_MERCHANT_WEBSITE"),
   merchant_industry: System.get_env("PAYTM_MERCHANT_INDUSTRY"),
   callback_url:      System.get_env("PAYTM_CALLBACK_URL"),
-  channel_id:        System.get_env("PAYTM_DEFAULT_CHANNEL"),
+  default_channel:   System.get_env("PAYTM_DEFAULT_CHANNEL"),
   recv_timeout:      30000
 
 config :paytm, Paytm.API.OAuth,
