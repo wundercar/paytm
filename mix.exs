@@ -4,13 +4,13 @@ defmodule Paytm.Mixfile do
   def project do
     [
       app: :paytm,
-      version: "0.4.1",
+      version: "0.5.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
-      description: "Paytm API client for Elixir with Wallet and OAuth API support"
+      description: "Paytm API client for Elixir with Wallet, Gratification and OAuth API support"
     ]
   end
 
