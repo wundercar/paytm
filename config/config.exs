@@ -11,6 +11,14 @@ config :paytm, Paytm.API.Wallet,
   default_channel:   System.get_env("PAYTM_DEFAULT_CHANNEL"),
   recv_timeout:      30000
 
+config :paytm, Paytm.API.Gratification,
+  base_url:                  "https://trust-uat.paytm.in/",
+  default_sales_wallet_name: System.get_env("PAYTM_GRATIFICATION_DEFAULT_SALES_WALLET_NAME"),
+  default_sales_wallet_guid: System.get_env("PAYTM_GRATIFICATION_DEFAULT_SALES_WALLET_GUID"),
+  merchant_key:              System.get_env("PAYTM_GRATIFICATION_MERCHANT_KEY"),
+  merchant_guid:             System.get_env("PAYTM_GRATIFICATION_MERCHANT_GUID"),
+  recv_timeout:              30000
+
 config :paytm, Paytm.API.OAuth,
   base_url:          "https://accounts-uat.paytm.com",
   client_id:         System.get_env("PAYTM_OAUTH_CLIENT_ID"),

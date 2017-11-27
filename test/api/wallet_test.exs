@@ -77,7 +77,7 @@ defmodule Paytm.API.WalletTest do
   end
 
   describe "add_money/5" do
-    test "it returns a valid map" do
+    test "returns a valid map" do
       token = %Token{access_token: "foo"}
       assert {:ok, %{REQUEST_TYPE: "ADD_MONEY"}} = Wallet.add_money(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
     end
@@ -85,7 +85,7 @@ defmodule Paytm.API.WalletTest do
 
   describe "refund/2" do
     @tag :pending
-    test "it successfully refunds transactions" do
+    test "successfully refunds transactions" do
       use_cassette "api-wallet-refund-success", match_requests_on: [:request_body] do
         assert {:ok, state, _} = OAuth.send_otp(%{email: @email, phone: @existing_user})
         assert {:ok, %Token{} = token} = OAuth.validate_otp(@existing_user_otp, state)
