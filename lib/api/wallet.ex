@@ -48,7 +48,7 @@ defmodule Paytm.API.Wallet do
           order_id :: String.t,
           customer_id :: String.t,
           token :: Token.t | String.t,
-          options :: [channel_id: String.t, callback_url: String.t]
+          options :: [channel: String.t | nil, callback_url: String.t | nil]
         ) :: {:ok, params :: map} | {:error, message :: String.t, code :: nil}
   def add_money(money, order_id, customer_id, token, options \\ [])
   def add_money(money, order_id, customer_id, token, options) when is_binary(token) and token != "" do
@@ -76,7 +76,7 @@ defmodule Paytm.API.Wallet do
           order_id :: String.t,
           customer_id :: String.t,
           token :: Token.t | String.t,
-          options :: [channel_id: String.t, app_ip: String.t]
+          options :: [channel: String.t | nil, app_ip: String.t | nil]
         ) :: {:ok, transaction :: Transaction.t} |
              {:error, message :: String.t, code :: String.t | atom | nil, transaction :: Transaction.t | nil}
   def charge(%Money{amount: amount, currency: :INR}, order_id, customer_id, %Token{access_token: token, phone: phone}, options \\ []) do

@@ -3,35 +3,46 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  @spec generate(parameters :: map, salt :: String.t) :: String.t
-  def generate(parameters, salt \\ generate_salt()) do
+  @spec generate(payload :: map | String.t, api_module :: module) :: String.t
+  def generate(_, api_module \\ Paytm.API.Wallet)
+
+  def generate(%{} = parameters, api_module) do
+    salt = generate_salt()
+
     parameters
     |> Map.keys
     |> Enum.sort
     |> Enum.map(&(parameters[&1]))
     |> Enum.join("|")
+    |> generate(api_module)
+  end
+
+  def generate(string, api_module) when is_binary(string) do
+    salt = generate_salt()
+
+    string
     |> append("|" <> salt)
     |> hash
     |> append(salt)
-    |> encrypt
+    |> encrypt(merchant_key(api_module))
   end
 
   @spec valid_checksum?(parameters :: map, checksum :: String.t) :: boolean
-  def valid_checksum?(parameters, checksum) do
+  def valid_checksum?(parameters, checksum, api_module \\ Paytm.API.Wallet) do
     salt =
       checksum
-      |> decrypt
+      |> decrypt(merchant_key(api_module))
       |> String.slice(-@salt_length, @salt_length)
 
     checksum == generate(parameters, salt)
   end
 
-  defp encrypt(binary, key \\ merchant_key()) do
+  defp encrypt(binary, key) do
     :crypto.block_encrypt(:aes_cbc128, key, @iv, pad(binary, @aes_block_size))
     |> Base.encode64
   end
 
-  defp decrypt(binary, key \\ merchant_key()) do
+  defp decrypt(binary, key) do
     with {:ok, data} <- Base.decode64(binary) do
       :crypto.block_decrypt(:aes_cbc128, key, @iv, data)
       |> unpad
@@ -63,7 +74,7 @@ defmodule Paytm.Checksum do
     |> binary_part(0, length)
   end
 
-  defp merchant_key do
-    Application.get_env(:paytm, Paytm.API.Wallet)[:merchant_key] || throw("Merchant key not set")
+  defp merchant_key(module) do
+    Application.get_env(:paytm, module)[:merchant_key] || throw("Merchant key not set")
   end
 end
