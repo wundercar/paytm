@@ -15,7 +15,7 @@ defmodule Paytm.API.Gratification do
       metadata: String.t | nil,
       ip_address: String.t | nil,
     ]
-  ) :: {:ok, transaction_id :: String.t, status :: :success | :pending}
+  ) :: {:ok, response :: map, status :: :success | :pending}
     |  {:error, message :: String.t, code :: atom | String.t}
   def credit(%Money{amount: amount, currency: :INR}, order_id, phone, email, options \\ []) do
     params = %{
@@ -54,17 +54,13 @@ defmodule Paytm.API.Gratification do
        {:ok, %{"status" => "SUCCESS",
                "statusCode" => "SUCCESS",
                "statusMessage" => "SUCCESS",
-               "response" => %{
-                 "walletSysTransactionId" => transaction_id
-               }}} ->
-         {:ok, transaction_id, :success}
+               "response" => response}} ->
+         {:ok, response, :success}
        {:ok, %{"status" => "PENDING",
-               "statusCode" => code,
-               "statusMessage" => message,
-               "response" => %{
-                 "walletSysTransactionId" => transaction_id
-               }}} ->
-         {:ok, transaction_id, :pending}
+               "statusCode" => _,
+               "statusMessage" => _,
+               "response" => response}} ->
+         {:ok, response, :pending}
        {:ok, %{"status" => "FAILURE",
                "statusCode" => code,
                "statusMessage" => message}} ->

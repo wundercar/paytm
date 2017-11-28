@@ -20,7 +20,7 @@ defmodule Paytm.API.GratificationTest do
     @tag :pending
     test "successfully credits an existing user's wallet" do
       use_cassette "api-gratification-credit-successful-credit", match_requests_on: [:request_body] do
-        assert {:ok, _transaction_id, :success} = Gratification.credit(Money.new(10_00, :INR), Helpers.random_id(), @existing_user, @email)
+        assert {:ok, _response, :success} = Gratification.credit(Money.new(10_00, :INR), Helpers.random_id(), @existing_user, @email)
       end
     end
 
@@ -47,7 +47,7 @@ defmodule Paytm.API.GratificationTest do
       ExVCR.Config.filter_sensitive_data(~s("payeePhoneNumber":".*?"), ~s("payeePhoneNumber":"9999999999"))
       ExVCR.Config.filter_sensitive_data(~s("payeeEmailId":".*?"), ~s("payeeEmailId":"foo@bar.com"))
       use_cassette "api-gratification-credit-successful-new-user-credit", match_requests_on: [:request_body] do
-        assert {:ok, _transaction_id, :pending} =
+        assert {:ok, _response, :pending} =
           Gratification.credit(Money.new(10_00, :INR), Helpers.random_id(), Helpers.random_phone(), "#{Helpers.random_id()}@foobar.com", apply_to_new_users: true)
       end
     end
