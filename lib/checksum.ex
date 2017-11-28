@@ -3,23 +3,19 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  @spec generate(payload :: map | String.t, api_module :: module) :: String.t
-  def generate(_, api_module \\ Paytm.API.Wallet)
+  @spec generate(payload :: map | String.t, api_module :: module, salt :: String.t) :: String.t
+  def generate(_, api_module \\ Paytm.API.Wallet, salt \\ generate_salt())
 
-  def generate(%{} = parameters, api_module) do
-    salt = generate_salt()
-
+  def generate(%{} = parameters, api_module, salt) do
     parameters
     |> Map.keys
     |> Enum.sort
     |> Enum.map(&(parameters[&1]))
     |> Enum.join("|")
-    |> generate(api_module)
+    |> generate(api_module, salt)
   end
 
-  def generate(string, api_module) when is_binary(string) do
-    salt = generate_salt()
-
+  def generate(string, api_module, salt) when is_binary(string) do
     string
     |> append("|" <> salt)
     |> hash
@@ -34,7 +30,7 @@ defmodule Paytm.Checksum do
       |> decrypt(merchant_key(api_module))
       |> String.slice(-@salt_length, @salt_length)
 
-    checksum == generate(parameters, salt)
+    checksum == generate(parameters, api_module, salt)
   end
 
   defp encrypt(binary, key) do
