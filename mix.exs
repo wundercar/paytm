@@ -10,6 +10,7 @@ defmodule Paytm.Mixfile do
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
+      aliases: aliases(),
       description: "Paytm API client for Elixir with Wallet, Gratification and OAuth API support"
     ]
   end
@@ -41,4 +42,10 @@ defmodule Paytm.Mixfile do
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_),     do: ["lib"]
+
+  defp aliases do
+    [
+      "compile":    ["compile --warnings-as-errors"]
+    ]
+  end
 end
