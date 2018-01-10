@@ -61,8 +61,7 @@ defmodule Paytm.API.Gratification do
                "statusMessage" => _,
                "response" => response}} ->
          {:ok, response, :pending}
-       {:ok, %{"status" => "FAILURE",
-               "statusCode" => code,
+       {:ok, %{"statusCode" => code,
                "statusMessage" => message}} ->
          {:error, message, @error_codes[code] || code}
      end
