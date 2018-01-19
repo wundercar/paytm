@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "body": "{\"request\":{\"salesWalletName\":\"MARKETING_DEALS\",\"salesWalletGuid\":\"SALES_WALLET_GUID\",\"requestType\":\"\",\"payeeSsoId\":\"\",\"payeePhoneNumber\":\"9999999999\",\"payeeEmailId\":\"foo@bar.com\",\"merchantOrderId\":\"foobar\",\"merchantGuid\":\"MERCHANT_GUID\",\"currencyCode\":\"INR\",\"appliedToNewUsers\":\"Y\",\"amount\":\"10.00\"},\"platformName\":\"PayTM\",\"operationType\":\"SALES_TO_USER_CREDIT\",\"metadata\":null,\"ipAddress\":\"127.0.0.1\"}",
+      "headers": {
+        "content-type": "application/json",
+        "mid": "***",
+        "checksumhash": "***"
+      },
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://trust-uat.paytm.in/wallet-web/salesToUserCredit"
+    },
+    "response": {
+      "body": "{\"type\":null,\"requestGuid\":null,\"orderId\":\"aa2fb522\",\"status\":\"PENDING\",\"statusCode\":\"STUC_1001\",\"statusMessage\":\"Payee wallet could not found.\",\"response\":{\"walletSysTransactionId\":\"1025103\"},\"metadata\":null}",
+      "headers": {
+        "Server": "nginx/1.8.1",
+        "Date": "Fri, 19 Jan 2018 17:02:00 GMT",
+        "Content-Length": "209",
+        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
