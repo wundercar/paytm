@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "body": "{\"request\":{\"txnType\":\"salestouser\",\"txnId\":\"TXN_ID\",\"requestType\":\"merchanttxnid\",\"merchantGuid\":\"MERCHANT_GUID\"},\"platformName\":\"PayTM\",\"operationType\":\"CHECK_TXN_STATUS\"}",
+      "headers": {
+        "content-type": "application/json",
+        "mid": "***",
+        "checksumhash": "***"
+      },
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://trust-uat.paytm.in/wallet-web/checkStatus"
+    },
+    "response": {
+      "body": "{\"type\":null,\"requestGuid\":null,\"orderId\":null,\"status\":\"FAILURE\",\"statusCode\":\"GE_1009\",\"statusMessage\":\"Invalid transaction id.\",\"response\":null,\"metadata\":null}",
+      "headers": {
+        "Server": "nginx/1.8.1",
+        "Date": "Fri, 19 Jan 2018 17:05:32 GMT",
+        "Content-Length": "163",
+        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]

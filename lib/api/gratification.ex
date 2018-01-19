@@ -1,5 +1,6 @@
 defmodule Paytm.API.Gratification do
   alias Paytm.Checksum
+  alias Paytm.API.Gratification.Transaction
 
   @error_codes %{}
 
@@ -67,6 +68,68 @@ defmodule Paytm.API.Gratification do
      end
   end
 
+  @reference_types %{
+    order_id: "merchanttxnid",
+    transaction_id: "wallettxnid",
+    refund_id: "wallettxnid",
+  }
+  @spec check_status(
+    reference_type :: :order_id | :transaction_id | :refund_id,
+    reference :: String.t
+    ) :: {:ok, transactions :: [Transaction.t]}
+    |  {:error, message :: String.t, code :: atom | String.t}
+  def check_status(reference_type, reference) do
+    params = %{
+      request: %{
+        requestType: @reference_types[reference_type],
+        txnType: "salestouser",
+        txnId: reference,
+        merchantGuid: config(:merchant_guid),
+      },
+      platformName: "PayTM",
+      operationType: "CHECK_TXN_STATUS",
+    }
+
+    body = Poison.encode!(params)
+
+    headers = [
+      {"content-type", "application/json"},
+      {"mid", config(:merchant_guid)},
+      {"checksumhash", Checksum.generate(body, Paytm.API.Gratification)}
+    ]
+
+     "/wallet-web/checkStatus"
+     |> add_base_url
+     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout)])
+     |> handle_response
+     |> case do
+       {:ok, %{"status" => "SUCCESS",
+               "statusMessage" => "SUCCESS",
+               "response" => response}} ->
+         {:ok, Enum.map(response["txnList"], &extract_transaction/1)}
+       {:ok, %{"status" => "FAILURE",
+               "statusCode" => code,
+               "statusMessage" => message}} ->
+         {:error, message, @error_codes[code] || code}
+     end
+  end
+
+  @status_atoms %{
+    0 => :init,
+    1 => :success,
+    2 => :failure,
+    3 => :pending,
+  }
+
+  defp extract_transaction(transaction) do
+    %Transaction{
+      id: transaction["txnGuid"],
+      order_id: transaction["merchantOrderId"],
+      money: Money.new(paytm_amount_to_cents(transaction["txnAmount"]), :INR),
+      status: @status_atoms[transaction["status"]],
+    }
+  end
+
   defp config(key) when is_atom(key) do
     Application.get_env(:paytm, Paytm.API.Gratification)[key]
   end
@@ -82,6 +145,18 @@ defmodule Paytm.API.Gratification do
   end
   defp amount_to_decimal_string(amount_cents) do
     :erlang.float_to_binary(amount_cents / 100, decimals: 2)
+  end
+
+  defp paytm_amount_to_cents(string) when is_binary(string) do
+    string
+    |> String.to_float
+    |> paytm_amount_to_cents
+  end
+  defp paytm_amount_to_cents(float) when is_float(float) do
+    trunc(float * 100)
+  end
+  defp paytm_amount_to_cents(integer) when is_integer(integer) do
+    integer * 100
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
