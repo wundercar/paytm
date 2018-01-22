@@ -178,6 +178,50 @@ defmodule Paytm.API.Wallet do
     end
   end
 
+  @spec check_status(order_id :: String.t)
+        :: {:ok, transaction :: Transaction.t} |
+           {:error, message :: String.t, code :: String.t}
+  def check_status(order_id) do
+    params = %{
+      MID: config(:merchant_id),
+      ORDERID: order_id,
+    }
+
+    body =
+      params
+      |> Map.put(:CHECKSUMHASH, Checksum.generate(params))
+      |> paytm_json_encode
+
+    "/oltp/HANDLER_INTERNAL/getTxnStatus"
+    |> add_base_url
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> handle_response
+    |> case do
+      {:ok, %{"TXNID" => txn_id} = body} when txn_id != "" ->
+        {:ok, %Transaction{
+          id: body["TXNID"],
+          merchant_id: body["MID"],
+          merchant_uid: body["MBID"],
+          order_id: body["ORDERID"],
+          customer_id: body["CustId"],
+          money: Money.new(paytm_amount_to_cents(body["TXNAMOUNT"]), :INR),
+          refunded_money: Money.new(paytm_amount_to_cents(body["REFUNDAMT"]), :INR),
+          successful: body["STATUS"] == "TXN_SUCCESS",
+          gateway_name: body["GATEWAYNAME"],
+          payment_mode: body["PAYMENTMODE"],
+          bank_name: body["BANKNAME"],
+          bank_transaction_id: body["BANKTXNID"],
+          response_code: body["RESPCODE"],
+          response_message: body["RESPMSG"],
+          timestamp: paytm_timestamp(body["TXNDATE"]),
+        }}
+      {:ok, %{"ErrorCode" => code, "ErrorMsg" => message}} ->
+        {:error, message, code}
+      {:ok, %{"RESPCODE" => code, "RESPMSG" => message}} ->
+        {:error, message, code}
+    end
+  end
+
   defp config(key) when is_atom(key) do
     Application.get_env(:paytm, Paytm.API.Wallet)[key]
   end
@@ -213,6 +257,8 @@ defmodule Paytm.API.Wallet do
 
   defp handle_body(%{} = body), do: {:ok, body}
 
+  defp paytm_amount_to_cents(nil), do: 0
+  defp paytm_amount_to_cents(""), do: 0
   defp paytm_amount_to_cents(string) when is_binary(string) do
     string
     |> String.to_float
@@ -220,5 +266,18 @@ defmodule Paytm.API.Wallet do
   end
   defp paytm_amount_to_cents(float) when is_float(float) do
     trunc(float * 100)
+  end
+
+  defp paytm_timestamp(""), do: nil
+  defp paytm_timestamp(nil), do: nil
+  defp paytm_timestamp(string) do
+    with {:ok, naive_date_time}      <- Timex.parse(string, "{ISOdate} {ISOtime}"),
+         %DateTime{} = date_time     <- Timex.to_datetime(naive_date_time, "+05:30"),
+         %DateTime{} = utc_date_time <- Timex.to_datetime(date_time)
+    do
+      utc_date_time
+    else
+      _ -> nil
+    end
   end
 end

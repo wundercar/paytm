@@ -13,6 +13,8 @@ defmodule Paytm.API.WalletTest do
     ExVCR.Config.filter_sensitive_data(~s("CustId":".*?"), ~s("CustId":"abc123"))
     ExVCR.Config.filter_sensitive_data(~s("SSOToken":".*?"), ~s("SSOToken":"SSO_TOKEN"))
     ExVCR.Config.filter_sensitive_data(~s("CheckSum":".*?"), ~s("CheckSum":"CHECKSUM"))
+    ExVCR.Config.filter_sensitive_data(~s("CHECKSUMHASH":".*?"), ~s("CHECKSUMHASH":"CHECKSUM"))
+    ExVCR.Config.filter_sensitive_data(~s("ORDERID":".*?"), ~s("ORDERID":"abc123"))
 
     ExVCR.Config.filter_request_headers("Authorization")
     ExVCR.Config.filter_request_headers("Set-Cookie")
@@ -101,6 +103,19 @@ defmodule Paytm.API.WalletTest do
         assert {:ok, %Balance{} = balance_after} = Wallet.fetch_balance(token)
 
         assert Money.equal?(balance_before, balance_after)
+      end
+    end
+  end
+
+  describe "check_status/1" do
+    test "returns transaction details" do
+      use_cassette "api-wallet-charge-success-transaction-details", match_requests_on: [:request_body] do
+        assert {:ok, state, _} = OAuth.send_otp(%{email: @email, phone: @existing_user})
+        assert {:ok, %Token{} = token} = OAuth.validate_otp(@existing_user_otp, state)
+        assert {:ok, %Token{} = token} = OAuth.validate_token(token)
+        order_id = "60339ae8-d5c5-4937-94a6-ad568081088e"
+        assert {:ok, %Transaction{successful: true}} = Wallet.charge(Money.new(1_00, :INR), order_id, Helpers.random_id, token, @default_options)
+        assert {:ok, %Transaction{successful: true, timestamp: %DateTime{}}} = Wallet.check_status(order_id)
       end
     end
   end
