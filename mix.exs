@@ -36,6 +36,7 @@ defmodule Paytm.Mixfile do
       {:money, "~> 1.2.1"},
       {:exvcr, "~> 0.8", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev},
+      {:timex, "~> 3.1"},
       {:uuid, "~> 1.1", only: [:dev, :test]}
     ]
   end

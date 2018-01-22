@@ -6,13 +6,17 @@ defmodule Paytm.API.Wallet.Transaction do
     order_id:            String.t,
     customer_id:         String.t,
     money:               Money.t,
+    refunded_money:      Money.t,
     successful:          boolean,
     payment_mode:        String.t,
     bank_name:           String.t,
     bank_transaction_id: String.t,
+    gateway_name:        String.t,
+    response_code:       String.t,
+    response_message:    String.t,
   }
 
-  @all_keys [
+  @required_keys [
     :id,
     :merchant_id,
     :merchant_uid,
@@ -22,10 +26,18 @@ defmodule Paytm.API.Wallet.Transaction do
     :successful,
     :payment_mode,
     :bank_name,
-    :bank_transaction_id
+    :bank_transaction_id,
   ]
 
-  @enforce_keys @all_keys
+  @optional_keys [
+    :timestamp,
+    :refunded_money,
+    :gateway_name,
+    :response_code,
+    :response_message,
+  ]
 
-  defstruct @all_keys
+  @enforce_keys @required_keys
+
+  defstruct @required_keys ++ @optional_keys
 end
