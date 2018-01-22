@@ -1,0 +1,137 @@
+[
+  {
+    "request": {
+      "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"bar@baz.com\",\"clientId\":\"CLIENT_ID\"}",
+      "headers": [],
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/otp"
+    },
+    "response": {
+      "body": "{\"status\":\"SUCCESS\",\"message\":\"Otp sent to phone\",\"responseCode\":\"01\",\"state\":\"e562605d-f2d7-4cf1-9fc8-dfb037a56272\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Mon, 22 Jan 2018 15:28:36 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "117",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "{\"state\":\"e562605d-f2d7-4cf1-9fc8-dfb037a56272\",\"otp\":\"489871\"}",
+      "headers": {
+        "Authorization": "***"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/signin/validate/otp"
+    },
+    "response": {
+      "body": "{\"access_token\":\"88313337-91f1-4fa6-bded-b83d252ea5a3\",\"expires\":\"1518608519401\",\"scope\":\"wallet\",\"resourceOwnerId\":\"11065108\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Mon, 22 Jan 2018 15:28:37 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "127",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "session_token": "88313337-91f1-4fa6-bded-b83d252ea5a3"
+      },
+      "method": "get",
+      "options": [],
+      "request_body": "",
+      "url": "https://accounts-uat.paytm.com/user/details"
+    },
+    "response": {
+      "body": "{\"id\":11065108,\"email\":\"zhanghuikun-rj@ofo.com\",\"mobile\":\"7777777777\",\"expires\":\"1518608519401\"}",
+      "headers": {
+        "Access-Control-Allow-Headers": "*",
+        "Cache-control": "no-cache=\"set-cookie\"",
+        "Content-Type": "application/json",
+        "Date": "Mon, 22 Jan 2018 15:28:37 GMT",
+        "Server": "nginx",
+        "Set-Cookie": "***",
+        "X-Frame-Options": "DENY",
+        "Content-Length": "96",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "JsonData={\"TxnAmount\":\"1.00\",\"SSOToken\":\"SSO_TOKEN\",\"ReqType\":\"WITHDRAW\",\"PaymentMode\":\"PPI\",\"OrderId\":\"abc123\",\"MID\":\"MID\",\"IndustryType\":\"Retail\",\"DeviceId\":\"7777777777\",\"CustId\":\"abc123\",\"Currency\":\"INR\",\"CheckSum\":\"CHECKSUM\",\"Channel\":\"WEB\",\"AuthMode\":\"USRPWD\",\"AppIP\":\"127.0.0.1\"}",
+      "headers": [],
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"
+    },
+    "response": {
+      "body": "{\"TxnId\":70000562638,\"MID\":\"MID\",\"OrderId\":\"abc123\",\"TxnAmount\":\"1.00\",\"BankTxnId\":\"1027168\",\"ResponseCode\":\"01\",\"ResponseMessage\":\"Txn Successful.\",\"Status\":\"TXN_SUCCESS\",\"PaymentMode\":\"PPI\",\"BankName\":\"WALLET\",\"CheckSum\":\"CHECKSUM\",\"CustId\":\"abc123\",\"MBID\":\"MBID\"}",
+      "headers": {
+        "Server": "nginx/1.6.2",
+        "Content-Type": "application/json",
+        "Content-Length": "447",
+        "Date": "Mon, 22 Jan 2018 15:28:51 GMT",
+        "Connection": "keep-alive",
+        "Set-Cookie": "***"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  },
+  {
+    "request": {
+      "body": "JsonData={\"ORDERID\":\"abc123\",\"MID\":\"MID\",\"CHECKSUMHASH\":\"CHECKSUM\"}",
+      "headers": [],
+      "method": "post",
+      "options": {
+        "recv_timeout": 30000
+      },
+      "request_body": "",
+      "url": "https://pguat.paytm.com/oltp/HANDLER_INTERNAL/getTxnStatus"
+    },
+    "response": {
+      "body": "{\"TXNID\":\"70000562638\",\"BANKTXNID\":\"1027168\",\"ORDERID\":\"abc123\",\"TXNAMOUNT\":\"1.00\",\"STATUS\":\"TXN_SUCCESS\",\"TXNTYPE\":\"SALE\",\"GATEWAYNAME\":\"WALLET\",\"RESPCODE\":\"01\",\"RESPMSG\":\"Txn Successful.\",\"BANKNAME\":\"\",\"MID\":\"MID\",\"PAYMENTMODE\":\"PPI\",\"REFUNDAMT\":\"0.00\",\"TXNDATE\":\"2018-01-22 20:58:38.345\"}",
+      "headers": {
+        "Server": "nginx/1.6.2",
+        "Content-Type": "text/plain",
+        "Content-Length": "338",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "POST, GET",
+        "Access-Control-Max-Age": "1000",
+        "Date": "Mon, 22 Jan 2018 15:28:51 GMT",
+        "Connection": "keep-alive"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
