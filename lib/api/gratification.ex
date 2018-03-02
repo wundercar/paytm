@@ -49,7 +49,7 @@ defmodule Paytm.API.Gratification do
 
      "/wallet-web/salesToUserCredit"
      |> add_base_url
-     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout)])
+     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
      |> handle_response
      |> case do
        {:ok, %{"status" => "SUCCESS",
@@ -100,7 +100,7 @@ defmodule Paytm.API.Gratification do
 
      "/wallet-web/checkStatus"
      |> add_base_url
-     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout)])
+     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
      |> handle_response
      |> case do
        {:ok, %{"status" => "SUCCESS",

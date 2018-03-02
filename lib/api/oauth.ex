@@ -29,7 +29,7 @@ defmodule Paytm.API.OAuth do
 
     "/signin/otp"
     |> add_base_url
-    |> HTTPoison.post(body)
+    |> HTTPoison.post(body, [], [hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"status" => "SUCCESS", "responseCode" => "01", "state" => state}} ->
@@ -50,7 +50,7 @@ defmodule Paytm.API.OAuth do
 
     "/signin/validate/otp"
     |> add_base_url
-    |> HTTPoison.post(body, [authorization_header()])
+    |> HTTPoison.post(body, [authorization_header()], [hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"access_token" => access_token,
@@ -75,7 +75,7 @@ defmodule Paytm.API.OAuth do
   def validate_token(%Token{access_token: access_token} = token) do
     "/user/details"
     |> add_base_url
-    |> HTTPoison.get([{"session_token", access_token}])
+    |> HTTPoison.get([{"session_token", access_token}], [hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"id" => customer_id,

@@ -24,7 +24,7 @@ defmodule Paytm.API.Wallet do
   end
   def fetch_balance(%Token{access_token: access_token}) do
     config(:check_balance_url)
-    |> HTTPoison.get([{"content-type", "application/json"}, {"ssotoken", access_token}], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.get([{"content-type", "application/json"}, {"ssotoken", access_token}], [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"status" => "SUCCESS",
@@ -103,7 +103,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_FF/withdrawScw"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"Error" => error}} ->
@@ -168,7 +168,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_INTERNAL/REFUND"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"STATUS" => "TXN_SUCCESS"} = body} ->
@@ -194,7 +194,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_INTERNAL/getTxnStatus"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout), hackney: [:insecure]])
     |> handle_response
     |> case do
       {:ok, %{"TXNID" => txn_id} = body} when txn_id != "" ->
