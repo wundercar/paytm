@@ -107,7 +107,7 @@ defmodule Paytm.API.OAuth do
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
+  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
     body
     |> Poison.decode!
