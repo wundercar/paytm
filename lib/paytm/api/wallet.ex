@@ -40,6 +40,8 @@ defmodule Paytm.API.Wallet do
               "statusCode" => code,
               "statusMessage" => message}} ->
         {:error, message, @error_codes[code] || code}
+      {:error, message, code} -> {:error, message, code}
+      _ -> {:error, "An unknown error occurred", nil}
     end
   end
 
@@ -131,7 +133,8 @@ defmodule Paytm.API.Wallet do
         else
           {:error, body["ResponseMessage"], body["ResponseCode"], transaction}
         end
-      error -> error
+      {:error, message, code} -> {:error, message, code, nil}
+      _ -> {:error, "An unknown error occurred", nil, nil}
     end
   end
 
@@ -141,15 +144,15 @@ defmodule Paytm.API.Wallet do
   def refund(transaction, reference, amount \\ nil)
   def refund(%Transaction{money: %Money{currency: currency}}, _, _)
   when currency != :INR do
-    {:error, "Only INR is supported for Paytm refunds"}
+    {:error, "Only INR is supported for Paytm refunds", nil}
   end
   def refund(%Transaction{money: %Money{currency: currency}}, _, %Money{currency: refund_currency})
   when refund_currency != currency do
-    {:error, "Can only refund the same currency"}
+    {:error, "Can only refund the same currency", nil}
   end
   def refund(%Transaction{money: %Money{amount: amount}}, _, %Money{amount: refund_amount})
   when refund_amount > amount do
-    {:error, "Cannot refund more than the transaction value"}
+    {:error, "Cannot refund more than the transaction value", nil}
   end
   def refund(transaction, reference, refund_money) do
     params = %{
@@ -175,6 +178,10 @@ defmodule Paytm.API.Wallet do
         {:ok, body["REFUNDID"]}
       {:ok, %{"STATUS" => "TXN_FAILURE"} = body} ->
         {:error, body["RESPMSG"], body["RESPCODE"]}
+      {:error, message, code} ->
+        {:error, message, code}
+      _ ->
+        {:error, "An unknown error occurred", nil}
     end
   end
 
@@ -219,6 +226,10 @@ defmodule Paytm.API.Wallet do
         {:error, message, code}
       {:ok, %{"RESPCODE" => code, "RESPMSG" => message}} ->
         {:error, message, code}
+      {:error, message, code} ->
+        {:error, message, code}
+      _ ->
+        {:error, "An unknown error occurred", nil}
     end
   end
 
@@ -247,7 +258,7 @@ defmodule Paytm.API.Wallet do
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
+  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
     body
     |> Poison.decode!
