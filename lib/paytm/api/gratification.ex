@@ -65,6 +65,10 @@ defmodule Paytm.API.Gratification do
        {:ok, %{"statusCode" => code,
                "statusMessage" => message}} ->
          {:error, message, @error_codes[code] || code}
+       {:error, message, code} ->
+         {:error, message, code}
+        _ ->
+          {:error, "An unknown error occurred", nil}
      end
   end
 
@@ -111,6 +115,10 @@ defmodule Paytm.API.Gratification do
                "statusCode" => code,
                "statusMessage" => message}} ->
          {:error, message, @error_codes[code] || code}
+       {:error, message, code} ->
+         {:error, message, code}
+        _ ->
+          {:error, "An unknown error occurred", nil}
      end
   end
 
@@ -160,7 +168,7 @@ defmodule Paytm.API.Gratification do
   end
 
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:ok, %{}}
+  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
     body
     |> Poison.decode!
