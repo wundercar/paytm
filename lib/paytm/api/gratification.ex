@@ -170,9 +170,10 @@ defmodule Paytm.API.Gratification do
   defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
   defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
   defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    body
-    |> Poison.decode!
-    |> handle_body
+    case Poison.decode(body) do
+      {:ok, decoded_body} -> handle_body(decoded_body)
+      _ -> {:error, "Invalid response from Paytm", nil}
+    end
   end
   defp handle_response(_), do: {:error, "An unknown error occurred", nil}
 
