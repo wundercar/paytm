@@ -115,7 +115,7 @@ defmodule Paytm.API.Wallet do
         else
           {:error, error, nil, nil}
         end
-      {:ok, body} ->
+      {:ok, %{"TxnId" => txn_id} = body} when txn_id != "" ->
         transaction = %Transaction{
           id: body["TxnId"],
           merchant_id: body["MID"],
