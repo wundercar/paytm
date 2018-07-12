@@ -31,7 +31,7 @@ defmodule Paytm.Mixfile do
 
   defp deps do
     [
-      {:httpoison, "~> 0.13"},
+      {:httpoison, "~> 1.2"},
       {:poison, "~> 3.1"},
       {:money, "~> 1.2.1"},
       {:exvcr, "~> 0.8", only: :test},
