@@ -3,14 +3,15 @@ defmodule Paytm.Checksum do
   @aes_block_size 16
   @iv "@@@@&&&&####$$$$"
 
-  @spec generate(payload :: map | String.t, api_module :: module, salt :: String.t) :: String.t
+  @spec generate(payload :: map | String.t(), api_module :: module, salt :: String.t()) ::
+          String.t()
   def generate(_, api_module \\ Paytm.API.Wallet, salt \\ generate_salt())
 
   def generate(%{} = parameters, api_module, salt) do
     parameters
-    |> Map.keys
-    |> Enum.sort
-    |> Enum.map(&(parameters[&1]))
+    |> Map.keys()
+    |> Enum.sort()
+    |> Enum.map(&parameters[&1])
     |> Enum.join("|")
     |> generate(api_module, salt)
   end
@@ -23,7 +24,7 @@ defmodule Paytm.Checksum do
     |> encrypt(merchant_key(api_module))
   end
 
-  @spec valid_checksum?(parameters :: map, checksum :: String.t) :: boolean
+  @spec valid_checksum?(parameters :: map, checksum :: String.t()) :: boolean
   def valid_checksum?(parameters, checksum, api_module \\ Paytm.API.Wallet) do
     salt =
       checksum
@@ -35,7 +36,7 @@ defmodule Paytm.Checksum do
 
   defp encrypt(binary, key) do
     :crypto.block_encrypt(:aes_cbc128, key, @iv, pad(binary, @aes_block_size))
-    |> Base.encode64
+    |> Base.encode64()
   end
 
   defp decrypt(binary, key) do
@@ -47,8 +48,8 @@ defmodule Paytm.Checksum do
 
   defp hash(string) do
     :crypto.hash(:sha256, string)
-    |> Base.encode16
-    |> String.downcase
+    |> Base.encode16()
+    |> String.downcase()
   end
 
   defp pad(data, block_size) do
@@ -65,8 +66,8 @@ defmodule Paytm.Checksum do
 
   defp generate_salt(length \\ @salt_length) do
     length
-    |> :crypto.strong_rand_bytes
-    |> Base.url_encode64
+    |> :crypto.strong_rand_bytes()
+    |> Base.url_encode64()
     |> binary_part(0, length)
   end
 

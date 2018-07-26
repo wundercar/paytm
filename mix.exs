@@ -6,9 +6,9 @@ defmodule Paytm.Mixfile do
       app: :paytm,
       version: "0.7.3",
       elixir: "~> 1.5",
-      start_permanent: Mix.env == :prod,
+      start_permanent: Mix.env() == :prod,
       deps: deps(),
-      elixirc_paths: elixirc_paths(Mix.env),
+      elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       aliases: aliases(),
       description: "Paytm API client for Elixir with Wallet, Gratification and OAuth API support"
@@ -23,7 +23,10 @@ defmodule Paytm.Mixfile do
 
   defp package do
     [
-      maintainers: ["Nihal Gonsalves <nihal@wunder.org>", "Bruno Santos <bruno.santos@wunder.org>"],
+      maintainers: [
+        "Nihal Gonsalves <nihal@wunder.org>",
+        "Bruno Santos <bruno.santos@wunder.org>"
+      ],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/wundercar/paytm"}
     ]
@@ -42,11 +45,11 @@ defmodule Paytm.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp aliases do
     [
-      "compile":    ["compile --warnings-as-errors"]
+      compile: ["compile --warnings-as-errors"]
     ]
   end
 end
