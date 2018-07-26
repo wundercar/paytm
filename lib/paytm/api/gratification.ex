@@ -1,4 +1,5 @@
 defmodule Paytm.API.Gratification do
+  use Paytm.API.Base
   alias Paytm.Checksum
   alias Paytm.API.Gratification.Transaction
 
@@ -49,7 +50,7 @@ defmodule Paytm.API.Gratification do
 
      "/wallet-web/salesToUserCredit"
      |> add_base_url
-     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout)])
+     |> HTTPoison.post(body, headers, httpoison_options())
      |> handle_response
      |> case do
        {:ok, %{"status" => "SUCCESS",
@@ -104,7 +105,7 @@ defmodule Paytm.API.Gratification do
 
      "/wallet-web/checkStatus"
      |> add_base_url
-     |> HTTPoison.post(body, headers, [recv_timeout: config(:recv_timeout)])
+     |> HTTPoison.post(body, headers, httpoison_options())
      |> handle_response
      |> case do
        {:ok, %{"status" => "SUCCESS",
@@ -137,45 +138,4 @@ defmodule Paytm.API.Gratification do
       status: @status_atoms[transaction["status"]],
     }
   end
-
-  defp config(key) when is_atom(key) do
-    Application.get_env(:paytm, Paytm.API.Gratification)[key]
-  end
-
-  defp add_base_url(url) do
-    config(:base_url)
-    |> URI.merge(url)
-    |> URI.to_string
-  end
-
-  defp amount_to_decimal_string(%Money{amount: amount_cents}) do
-    amount_to_decimal_string(amount_cents)
-  end
-  defp amount_to_decimal_string(amount_cents) do
-    :erlang.float_to_binary(amount_cents / 100, decimals: 2)
-  end
-
-  defp paytm_amount_to_cents(string) when is_binary(string) do
-    string
-    |> String.to_float
-    |> paytm_amount_to_cents
-  end
-  defp paytm_amount_to_cents(float) when is_float(float) do
-    trunc(float * 100)
-  end
-  defp paytm_amount_to_cents(integer) when is_integer(integer) do
-    integer * 100
-  end
-
-  defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
-  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    case Poison.decode(body) do
-      {:ok, decoded_body} -> handle_body(decoded_body)
-      _ -> {:error, "Invalid response from Paytm", nil}
-    end
-  end
-  defp handle_response(_), do: {:error, "An unknown error occurred", nil}
-
-  defp handle_body(%{} = body), do: {:ok, body}
 end

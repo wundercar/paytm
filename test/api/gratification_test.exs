@@ -4,7 +4,7 @@ defmodule Paytm.API.GratificationTest do
   alias Paytm.API.Gratification
   alias Gratification.Transaction
 
-  setup_all do
+  setup do
     ExVCR.Config.filter_sensitive_data(~s("merchantGuid":".*?"), ~s("merchantGuid":"MERCHANT_GUID"))
     ExVCR.Config.filter_sensitive_data(~s("salesWalletGuid":".*?"), ~s("salesWalletGuid":"SALES_WALLET_GUID"))
     ExVCR.Config.filter_sensitive_data(~s("merchantOrderId":".*?"), ~s("merchantOrderId":"foobar"))

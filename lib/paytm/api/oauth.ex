@@ -1,4 +1,5 @@
 defmodule Paytm.API.OAuth do
+  use Paytm.API.Base
   alias Paytm.API.OAuth.Token
 
   @error_codes %{
@@ -29,8 +30,9 @@ defmodule Paytm.API.OAuth do
 
     "/signin/otp"
     |> add_base_url
-    |> HTTPoison.post(body)
+    |> HTTPoison.post(body, [], httpoison_options())
     |> handle_response
+    |> handle_body
     |> case do
       {:ok, %{"status" => "SUCCESS", "responseCode" => "01", "state" => state}} ->
         {:ok, state, :login}
@@ -50,8 +52,9 @@ defmodule Paytm.API.OAuth do
 
     "/signin/validate/otp"
     |> add_base_url
-    |> HTTPoison.post(body, [authorization_header()])
+    |> HTTPoison.post(body, [authorization_header()], httpoison_options())
     |> handle_response
+    |> handle_body
     |> case do
       {:ok, %{"access_token" => access_token,
               "expires" => expires_at,
@@ -75,8 +78,9 @@ defmodule Paytm.API.OAuth do
   def validate_token(%Token{access_token: access_token} = token) do
     "/user/details"
     |> add_base_url
-    |> HTTPoison.get([{"session_token", access_token}])
+    |> HTTPoison.get([{"session_token", access_token}], httpoison_options())
     |> handle_response
+    |> handle_body
     |> case do
       {:ok, %{"id" => customer_id,
               "email" => email,
@@ -88,37 +92,17 @@ defmodule Paytm.API.OAuth do
                      email: email,
                      phone: to_string(phone)}}
       {:error, message, code} -> {:error, message, code}
-      _ -> {:error, "An unknown error occurred", nil}
+      e -> IO.inspect(e); {:error, "An unknown error occurred", nil}
     end
-  end
-
-  defp config(key) when is_atom(key) do
-    Application.get_env(:paytm, Paytm.API.OAuth)[key]
-  end
-
-  defp add_base_url(url) do
-    config(:base_url)
-    |> URI.merge(url)
-    |> URI.to_string
   end
 
   defp authorization_header do
     {"Authorization", "Basic #{Base.encode64("#{config(:client_id)}:#{config(:client_secret)}")}}"}
   end
 
-  defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
-  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    case Poison.decode(body) do
-      {:ok, decoded_body} -> handle_body(decoded_body)
-      _ -> {:error, "Invalid response from Paytm", nil}
-    end
+  defp handle_body({:ok, %{"status" => "FAILURE", "responseCode" => code, "message" => message}}) do
+    {:error, message, @error_codes[code]}
   end
-  defp handle_response(_), do: {:error, "An unknown error occurred", nil}
 
-  defp handle_body(%{"status" => "FAILURE", "responseCode" => code, "message" => message}), do: {:error, message, @error_codes[code]}
-  defp handle_body(%{} = body), do: {:ok, body}
-
-  defp to_integer(integer) when is_integer(integer), do: integer
-  defp to_integer(string) when is_binary(string), do: String.to_integer(string)
+  defp handle_body(body_tuple), do: body_tuple
 end

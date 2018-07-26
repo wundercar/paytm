@@ -3,7 +3,7 @@ defmodule Paytm.API.OAuthTest do
   alias Paytm.API.OAuth
   alias OAuth.Token
 
-  setup_all do
+  setup do
     ExVCR.Config.filter_sensitive_data(~s("clientId":".*"), ~s("clientId":"CLIENT_ID"))
     ExVCR.Config.filter_request_headers("Authorization")
     ExVCR.Config.filter_request_headers("Set-Cookie")

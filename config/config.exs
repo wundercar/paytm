@@ -22,6 +22,7 @@ config :paytm, Paytm.API.Gratification,
 config :paytm, Paytm.API.OAuth,
   base_url:          "https://accounts-uat.paytm.com",
   client_id:         System.get_env("PAYTM_OAUTH_CLIENT_ID"),
-  client_secret:     System.get_env("PAYTM_OAUTH_CLIENT_SECRET")
+  client_secret:     System.get_env("PAYTM_OAUTH_CLIENT_SECRET"),
+  recv_timeout:      30000
 
 import_config "#{Mix.env}.exs"

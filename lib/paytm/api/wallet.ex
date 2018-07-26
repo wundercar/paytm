@@ -1,4 +1,5 @@
 defmodule Paytm.API.Wallet do
+  use Paytm.API.Base
   alias Paytm.Checksum
   alias Paytm.API.OAuth.Token
   alias Paytm.API.Wallet.{Balance, Transaction}
@@ -105,7 +106,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_FF/withdrawScw"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], httpoison_options())
     |> handle_response
     |> case do
       {:ok, %{"Error" => error}} ->
@@ -171,7 +172,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_INTERNAL/REFUND"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], httpoison_options())
     |> handle_response
     |> case do
       {:ok, %{"STATUS" => "TXN_SUCCESS"} = body} ->
@@ -201,7 +202,7 @@ defmodule Paytm.API.Wallet do
 
     "/oltp/HANDLER_INTERNAL/getTxnStatus"
     |> add_base_url
-    |> HTTPoison.post(body, [], [recv_timeout: config(:recv_timeout)])
+    |> HTTPoison.post(body, [], httpoison_options())
     |> handle_response
     |> case do
       {:ok, %{"TXNID" => txn_id} = body} when txn_id != "" ->
@@ -230,66 +231,6 @@ defmodule Paytm.API.Wallet do
         {:error, message, code}
       _ ->
         {:error, "An unknown error occurred", nil}
-    end
-  end
-
-  defp config(key) when is_atom(key) do
-    Application.get_env(:paytm, Paytm.API.Wallet)[key]
-  end
-
-  defp add_base_url(url) do
-    config(:base_url)
-    |> URI.merge(url)
-    |> URI.to_string
-  end
-
-  defp paytm_json_encode(map) do
-    map_with_uri_encoded_values =
-      for {k, v} <- map, into: %{}, do: {k, URI.encode("#{v}", &URI.char_unreserved?(&1))}
-
-    "JsonData=" <> Poison.encode!(map_with_uri_encoded_values)
-  end
-
-  defp amount_to_decimal_string(%Money{amount: amount_cents}) do
-    amount_to_decimal_string(amount_cents)
-  end
-  defp amount_to_decimal_string(amount_cents) do
-    :erlang.float_to_binary(amount_cents / 100, decimals: 2)
-  end
-
-  defp handle_response({:error, %HTTPoison.Error{reason: reason}}), do: {:error, "", reason}
-  defp handle_response({:ok, %HTTPoison.Response{body: ""}}), do: {:error, "Invalid response from Paytm", nil}
-  defp handle_response({:ok, %HTTPoison.Response{body: body}}) do
-    case Poison.decode(body) do
-      {:ok, decoded_body} -> handle_body(decoded_body)
-      _ -> {:error, "Invalid response from Paytm", nil}
-    end
-  end
-  defp handle_response(_), do: {:error, "An unknown error occurred", nil}
-
-  defp handle_body(%{} = body), do: {:ok, body}
-
-  defp paytm_amount_to_cents(nil), do: 0
-  defp paytm_amount_to_cents(""), do: 0
-  defp paytm_amount_to_cents(string) when is_binary(string) do
-    string
-    |> String.to_float
-    |> paytm_amount_to_cents
-  end
-  defp paytm_amount_to_cents(float) when is_float(float) do
-    trunc(float * 100)
-  end
-
-  defp paytm_timestamp(""), do: nil
-  defp paytm_timestamp(nil), do: nil
-  defp paytm_timestamp(string) do
-    with {:ok, naive_date_time}      <- Timex.parse(string, "{ISOdate} {ISOtime}"),
-         %DateTime{} = date_time     <- Timex.to_datetime(naive_date_time, "+05:30"),
-         %DateTime{} = utc_date_time <- Timex.to_datetime(date_time)
-    do
-      utc_date_time
-    else
-      _ -> nil
     end
   end
 end

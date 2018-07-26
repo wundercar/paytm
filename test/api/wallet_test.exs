@@ -5,7 +5,7 @@ defmodule Paytm.API.WalletTest do
   alias OAuth.Token
   alias Wallet.{Balance, Transaction}
 
-  setup_all do
+  setup do
     ExVCR.Config.filter_sensitive_data(~s("clientId":".*?"), ~s("clientId":"CLIENT_ID"))
     ExVCR.Config.filter_sensitive_data(~s("MID":".*?"), ~s("MID":"MID"))
     ExVCR.Config.filter_sensitive_data(~s("MBID":".*?"), ~s("MBID":"MBID"))
