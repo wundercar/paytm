@@ -16,7 +16,7 @@ Add `paytm` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:paytm, "~> 0.7.3"}
+    {:paytm, "~> 0.8.0"}
   ]
 end
 ```
