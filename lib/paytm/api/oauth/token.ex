@@ -1,12 +1,12 @@
 defmodule Paytm.API.OAuth.Token do
   @type t :: %__MODULE__{
-    access_token: String.t,
-    expires_at:   integer  | nil,
-    scope:        String.t | nil,
-    customer_id:  String.t | nil,
-    email:        String.t | nil,
-    phone:        String.t | nil,
-  }
+          access_token: String.t(),
+          expires_at: integer | nil,
+          scope: String.t() | nil,
+          customer_id: String.t() | nil,
+          email: String.t() | nil,
+          phone: String.t() | nil
+        }
   @enforce_keys [:access_token]
   defstruct [
     :access_token,
@@ -14,6 +14,6 @@ defmodule Paytm.API.OAuth.Token do
     :scope,
     :customer_id,
     :email,
-    :phone,
+    :phone
   ]
 end

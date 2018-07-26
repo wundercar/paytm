@@ -4,7 +4,10 @@
       "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"7777777777\",\"email\":\"bar@baz.com\",\"clientId\":\"CLIENT_ID\"}",
       "headers": [],
       "method": "post",
-      "options": [],
+      "options": {
+        "recv_timeout": 30000,
+        "insecure": true
+      },
       "request_body": "",
       "url": "https://accounts-uat.paytm.com/signin/otp"
     },
@@ -32,7 +35,10 @@
         "Authorization": "***"
       },
       "method": "post",
-      "options": [],
+      "options": {
+        "recv_timeout": 30000,
+        "insecure": true
+      },
       "request_body": "",
       "url": "https://accounts-uat.paytm.com/signin/validate/otp"
     },
@@ -60,7 +66,10 @@
         "session_token": "810d0508-c1d9-4d0e-ada1-e6e009eda9ad"
       },
       "method": "get",
-      "options": [],
+      "options": {
+        "recv_timeout": 30000,
+        "insecure": true
+      },
       "request_body": "",
       "url": "https://accounts-uat.paytm.com/user/details"
     },
@@ -90,7 +99,8 @@
       },
       "method": "get",
       "options": {
-        "recv_timeout": 30000
+        "recv_timeout": 30000,
+        "insecure": true
       },
       "request_body": "",
       "url": "https://trust-uat.paytm.in/service/checkUserBalance"
@@ -116,7 +126,8 @@
       "headers": [],
       "method": "post",
       "options": {
-        "recv_timeout": 30000
+        "recv_timeout": 30000,
+        "insecure": true
       },
       "request_body": "",
       "url": "https://pguat.paytm.com/oltp/HANDLER_FF/withdrawScw"

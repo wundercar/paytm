@@ -7,7 +7,10 @@
         "ssotoken": "***"
       },
       "method": "get",
-      "options": [],
+      "options": {
+        "recv_timeout": 30000,
+        "insecure": true
+      },
       "request_body": "",
       "url": "https://trust-uat.paytm.in/service/checkUserBalance"
     },

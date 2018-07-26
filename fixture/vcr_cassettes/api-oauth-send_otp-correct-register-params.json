@@ -4,7 +4,10 @@
       "body": "{\"scope\":\"wallet\",\"responseType\":\"token\",\"phone\":\"9900990099\",\"email\":\"foo@bar.com\",\"clientId\":\"CLIENT_ID\"}",
       "headers": [],
       "method": "post",
-      "options": [],
+      "options": {
+        "recv_timeout": 30000,
+        "insecure": true
+      },
       "request_body": "",
       "url": "https://accounts-uat.paytm.com/signin/otp"
     },

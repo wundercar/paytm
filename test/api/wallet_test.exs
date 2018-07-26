@@ -1,11 +1,11 @@
 defmodule Paytm.API.WalletTest do
-  use   Paytm.DataCase
+  use Paytm.DataCase
   alias Paytm.Support.Helpers
   alias Paytm.API.{OAuth, Wallet}
   alias OAuth.Token
   alias Wallet.{Balance, Transaction}
 
-  setup_all do
+  setup do
     ExVCR.Config.filter_sensitive_data(~s("clientId":".*?"), ~s("clientId":"CLIENT_ID"))
     ExVCR.Config.filter_sensitive_data(~s("MID":".*?"), ~s("MID":"MID"))
     ExVCR.Config.filter_sensitive_data(~s("MBID":".*?"), ~s("MBID":"MBID"))
@@ -23,8 +23,8 @@ defmodule Paytm.API.WalletTest do
     :ok
   end
 
-  @email             "bar@baz.com"
-  @existing_user     "7777777777"
+  @email "bar@baz.com"
+  @existing_user "7777777777"
   @existing_user_otp "489871"
 
   describe "fetch_balance/1" do
@@ -40,7 +40,9 @@ defmodule Paytm.API.WalletTest do
 
         assert balance.total_balance.amount > 0
         assert balance.paytm_wallet_balance.amount > 0
-        assert Money.subtract(balance.total_balance, balance.paytm_wallet_balance) == balance.sub_wallet_balance
+
+        assert Money.subtract(balance.total_balance, balance.paytm_wallet_balance) ==
+                 balance.sub_wallet_balance
       end
     end
 
@@ -61,7 +63,13 @@ defmodule Paytm.API.WalletTest do
         assert {:ok, %Token{} = token} = OAuth.validate_token(token)
 
         assert {:ok, %Transaction{successful: true}} =
-          Wallet.charge(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
+                 Wallet.charge(
+                   Money.new(1_00, :INR),
+                   Helpers.random_id(),
+                   Helpers.random_id(),
+                   token,
+                   @default_options
+                 )
       end
     end
 
@@ -73,7 +81,13 @@ defmodule Paytm.API.WalletTest do
         assert {:ok, %Balance{} = balance} = Wallet.fetch_balance(token)
 
         assert {:error, _message, "235", %Transaction{successful: false}} =
-          Wallet.charge(Money.add(balance.paytm_wallet_balance, Money.new(1000_00, :INR)), Helpers.random_id, Helpers.random_id, token, @default_options)
+                 Wallet.charge(
+                   Money.add(balance.paytm_wallet_balance, Money.new(1000_00, :INR)),
+                   Helpers.random_id(),
+                   Helpers.random_id(),
+                   token,
+                   @default_options
+                 )
       end
     end
   end
@@ -81,7 +95,15 @@ defmodule Paytm.API.WalletTest do
   describe "add_money/5" do
     test "returns a valid map" do
       token = %Token{access_token: "foo"}
-      assert {:ok, %{REQUEST_TYPE: "ADD_MONEY"}} = Wallet.add_money(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
+
+      assert {:ok, %{REQUEST_TYPE: "ADD_MONEY"}} =
+               Wallet.add_money(
+                 Money.new(1_00, :INR),
+                 Helpers.random_id(),
+                 Helpers.random_id(),
+                 token,
+                 @default_options
+               )
     end
   end
 
@@ -96,9 +118,15 @@ defmodule Paytm.API.WalletTest do
         assert {:ok, %Balance{} = balance_before} = Wallet.fetch_balance(token)
 
         assert {:ok, %Transaction{successful: true} = transaction} =
-          Wallet.charge(Money.new(1_00, :INR), Helpers.random_id, Helpers.random_id, token, @default_options)
+                 Wallet.charge(
+                   Money.new(1_00, :INR),
+                   Helpers.random_id(),
+                   Helpers.random_id(),
+                   token,
+                   @default_options
+                 )
 
-        assert {:ok, _refund_id} = Wallet.refund(transaction, Helpers.random_id)
+        assert {:ok, _refund_id} = Wallet.refund(transaction, Helpers.random_id())
 
         assert {:ok, %Balance{} = balance_after} = Wallet.fetch_balance(token)
 
@@ -109,13 +137,24 @@ defmodule Paytm.API.WalletTest do
 
   describe "check_status/1" do
     test "returns transaction details" do
-      use_cassette "api-wallet-charge-success-transaction-details", match_requests_on: [:request_body] do
+      use_cassette "api-wallet-charge-success-transaction-details",
+        match_requests_on: [:request_body] do
         assert {:ok, state, _} = OAuth.send_otp(%{email: @email, phone: @existing_user})
         assert {:ok, %Token{} = token} = OAuth.validate_otp(@existing_user_otp, state)
         assert {:ok, %Token{} = token} = OAuth.validate_token(token)
         order_id = "60339ae8-d5c5-4937-94a6-ad568081088e"
-        assert {:ok, %Transaction{successful: true}} = Wallet.charge(Money.new(1_00, :INR), order_id, Helpers.random_id, token, @default_options)
-        assert {:ok, %Transaction{successful: true, timestamp: %DateTime{}}} = Wallet.check_status(order_id)
+
+        assert {:ok, %Transaction{successful: true}} =
+                 Wallet.charge(
+                   Money.new(1_00, :INR),
+                   order_id,
+                   Helpers.random_id(),
+                   token,
+                   @default_options
+                 )
+
+        assert {:ok, %Transaction{successful: true, timestamp: %DateTime{}}} =
+                 Wallet.check_status(order_id)
       end
     end
   end

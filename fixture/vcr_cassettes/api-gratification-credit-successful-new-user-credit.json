@@ -9,7 +9,8 @@
       },
       "method": "post",
       "options": {
-        "recv_timeout": 30000
+        "recv_timeout": 30000,
+        "insecure": true
       },
       "request_body": "",
       "url": "https://trust-uat.paytm.in/wallet-web/salesToUserCredit"
