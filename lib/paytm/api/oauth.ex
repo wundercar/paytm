@@ -116,8 +116,7 @@ defmodule Paytm.API.OAuth do
       {:error, message, code} ->
         {:error, message, code}
 
-      e ->
-        IO.inspect(e)
+      _ ->
         {:error, "An unknown error occurred", nil}
     end
   end
