@@ -4,7 +4,7 @@ defmodule Paytm.Mixfile do
   def project do
     [
       app: :paytm,
-      version: "0.7.3",
+      version: "0.8.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -24,8 +24,7 @@ defmodule Paytm.Mixfile do
   defp package do
     [
       maintainers: [
-        "Nihal Gonsalves <nihal@wunder.org>",
-        "Bruno Santos <bruno.santos@wunder.org>"
+        "Nihal Gonsalves <nihal@wunder.org>"
       ],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/wundercar/paytm"}
