@@ -28,7 +28,7 @@ defmodule Paytm.API.Wallet do
     config(:check_balance_url)
     |> HTTPoison.get(
       [{"content-type", "application/json"}, {"ssotoken", access_token}],
-      recv_timeout: config(:recv_timeout)
+      httpoison_options()
     )
     |> handle_response
     |> case do
