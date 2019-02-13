@@ -35,7 +35,7 @@ defmodule Paytm.Mixfile do
     [
       {:httpoison, "~> 1.2"},
       {:poison, "~> 3.1"},
-      {:money, "~> 1.2.1"},
+      {:money, "~> 1.3"},
       {:exvcr, "~> 0.8", only: :test},
       {:ex_doc, ">= 0.0.0", only: :dev},
       {:timex, "~> 3.1"},
