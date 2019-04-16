@@ -1,6 +1,6 @@
 # Paytm
 
-[![Build Status](https://travis-ci.org/wundercar/paytm.svg?branch=develop)](https://travis-ci.org/wundercar/paytm)
+[![CircleCI](https://circleci.com/gh/wundercar/paytm/tree/develop.svg?style=svg)](https://circleci.com/gh/wundercar/paytm/tree/develop)
 [![Hex pm](http://img.shields.io/hexpm/v/paytm.svg?style=flat)](https://hex.pm/packages/paytm)
 
 Paytm API client for Elixir with Wallet, Gratification and OAuth API support
