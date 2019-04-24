@@ -24,7 +24,7 @@ defmodule Paytm.Mixfile do
   defp package do
     [
       maintainers: [
-        "Nihal Gonsalves <nihal@wunder.org>"
+        "Bruno Azenha <bruno.azenha@wundermobility.com>"
       ],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/wundercar/paytm"}
